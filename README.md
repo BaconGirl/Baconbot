@@ -1,4 +1,4 @@
-# BaconBot! Clone of basicBot (source)
+# BaconBot! clone of basicBot
 > A not so basic bot for plug.dj
 
 ---
