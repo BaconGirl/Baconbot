@@ -3,15 +3,6 @@
 
 ---
 
-[CLICK HERE TO CUSTOMISE BASICBOT!](https://github.com/bscBot/custom)
--
-
-[![Slack](https://basicbot.herokuapp.com/badge.svg)](https://basicbot.herokuapp.com/) [![facebook group](https://ssl.benzi.io/dump/facebook-group-badge.svg)](https://facebook.com/groups/basicBot) [![twitter](https://ssl.benzi.io/dump/twitter-badge.svg)](https://twitter.com/bscbt)
-
-Email enquiries: [bnz.mngn [at] gmail [dot] com](mailto:bnz.mngn@gmail.com)
-
----
-
 Developers
 -------------
  - [BaconGirl](https://github.com/BaconGirl) __(Maintainer)__
