@@ -232,8 +232,8 @@
     };
 
     var botCreator = "The Basic Team";
-    var botMaintainer = "Benzi"
-    var botCreatorIDs = ["3851534", "4105209"];
+    var botMaintainer = "BaconGirl / AleBles / Davpat "
+    var botCreatorIDs = ["6439812", "6440073"];
 
     var basicBot = {
         version: "2.8.14",
@@ -248,7 +248,7 @@
         retrieveSettings: retrieveSettings,
         retrieveFromStorage: retrieveFromStorage,
         settings: {
-            botName: "basicBot",
+            botName: "baconBot",
             language: "english",
             chatLink: "https://rawgit.com/bscBot/source/master/lang/en.json",
             scriptLink: "https://rawgit.com/bscBot/source/master/basicBot.js",
@@ -261,7 +261,7 @@
             smartSkip: true,
             cmdDeletion: true,
             maximumAfk: 120,
-            afkRemoval: true,
+            afkRemoval: false,
             maximumDc: 60,
             bouncerPlus: true,
             blacklistEnabled: true,
@@ -270,29 +270,30 @@
             maximumLocktime: 10,
             cycleGuard: true,
             maximumCycletime: 10,
-            voteSkip: false,
-            voteSkipLimit: 10,
-            historySkip: false,
+            voteSkip: true,
+            voteSkipLimit: 4,
+            historySkip: true,
             timeGuard: true,
-            maximumSongLength: 10,
+            maximumSongLength: 8,
             autodisable: true,
             commandCooldown: 30,
             usercommandsEnabled: true,
             skipPosition: 3,
             skipReasons: [
-                ["theme", "This song does not fit the room theme. "],
-                ["op", "This song is on the OP list. "],
+                ["meh", "The son you choose is too long or has too many mehs. "],
+                ["genre", "This song has wrong genre for the community. "],
+                ["op", "This song is on the overplayed list. "],
                 ["history", "This song is in the history. "],
                 ["mix", "You played a mix, which is against the rules. "],
                 ["sound", "The song you played had bad sound quality or no sound. "],
-                ["nsfw", "The song you contained was NSFW (image or sound). "],
-                ["unavailable", "The song you played was not available for some users. "]
+                ["nsfw", "The song you contained was NSFW (image or sound), offensive or innapropiate. "],
+                ["unavailable", "The song you played was not available for some users or does not play. "]
             ],
             afkpositionCheck: 15,
             afkRankCheck: "ambassador",
             motdEnabled: false,
-            motdInterval: 5,
-            motd: "Temporary Message of the Day",
+            motdInterval: 10,
+            motd: "Remember to check the BACON RULES on the description of the community.",
             filterChat: true,
             etaRestriction: false,
             welcome: true,
