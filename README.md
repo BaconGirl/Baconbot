@@ -14,7 +14,7 @@ Email enquiries: [bnz.mngn [at] gmail [dot] com](mailto:bnz.mngn@gmail.com)
 
 Developers
 -------------
- - [Benzi](https://github.com/Benzi) __(Maintainer)__
+ - [BaconGirl](https://github.com/BaconGirl) __(Maintainer)__
 
 
 ###__IMPORTANT__
