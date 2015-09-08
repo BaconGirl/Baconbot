@@ -31,44 +31,6 @@
         baconBot.status = false;
     };
 
-    // This socket server is used solely for statistical and troubleshooting purposes.
-    // This server may not always be up, but will be used to get live data at any given time.
-
-    var socket = function () {
-        function loadSocket() {
-            SockJS.prototype.msg = function(a){this.send(JSON.stringify(a))};
-            sock = new SockJS('https://benzi.io:4964/socket');
-            sock.onopen = function() {
-                console.log('Connected to socket!');
-                sendToSocket();
-            };
-            sock.onclose = function() {
-                console.log('Disconnected from socket, reconnecting every minute ..');
-                var reconnect = setTimeout(function(){ loadSocket() }, 60 * 1000);
-            };
-            sock.onmessage = function(broadcast) {
-                var rawBroadcast = broadcast.data;
-                var broadcastMessage = rawBroadcast.replace(/["\\]+/g, '');
-                API.chatLog(broadcastMessage);
-                console.log(broadcastMessage);
-            };
-        }
-        if (typeof SockJS == 'undefined') {
-            $.getScript('https://cdn.jsdelivr.net/sockjs/0.3.4/sockjs.min.js', loadSocket);
-        } else loadSocket();
-    }
-
-    var sendToSocket = function () {
-        var baconBotSettings = baconBot.settings;
-        var baconBotRoom = baconBot.room;
-        var baconBotInfo = {
-            time: Date.now(),
-            version: baconBot.version
-        };
-        var data = {users:API.getUsers(),userinfo:API.getUser(),room:location.pathname,baconBotSettings:baconBotSettings,baconBotRoom:baconBotRoom,baconBotInfo:baconBotInfo};
-        return sock.msg(data);
-    };
-
     var storeToStorage = function () {
         localStorage.setItem("baconBotsettings", JSON.stringify(baconBot.settings));
         localStorage.setItem("baconBotRoom", JSON.stringify(baconBot.room));
@@ -1076,7 +1038,6 @@
                 }, remaining + 5000);
             }
             storeToStorage();
-            sendToSocket();
         },
         eventWaitlistupdate: function (users) {
             if (users.length < 50) {
@@ -1440,7 +1401,6 @@
             }
             API.chatLog('Avatars capped at ' + baconBot.settings.startupCap);
             API.chatLog('Volume set to ' + baconBot.settings.startupVolume);
-            socket();
             loadChat(API.sendChat(subChat(baconBot.chat.online, {botname: baconBot.settings.botName, version: baconBot.version})));
         },
         commands: {
@@ -2452,7 +2412,6 @@
                     if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         storeToStorage();
-                        sendToSocket();
                         API.sendChat(baconBot.chat.kill);
                         baconBot.disconnectAPI();
                         setTimeout(function () {
@@ -2893,7 +2852,6 @@
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
                     if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        sendToSocket();
                         storeToStorage();
                         baconBot.disconnectAPI();
                         setTimeout(function () {
@@ -2913,7 +2871,6 @@
                     if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         API.sendChat(baconBot.chat.reload);
-                        sendToSocket();
                         storeToStorage();
                         baconBot.disconnectAPI();
                         kill();
