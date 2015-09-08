@@ -8,7 +8,7 @@
 (function () {
 
     /*window.onerror = function() {
-        var room = JSON.parse(localStorage.getItem("basicBotRoom"));
+        var room = JSON.parse(localStorage.getItem("baconBotRoom"));
         window.location = 'https://plug.dj' + room.name;
     };*/
 
@@ -26,9 +26,9 @@
     };
 
     var kill = function () {
-        clearInterval(basicBot.room.autodisableInterval);
-        clearInterval(basicBot.room.afkInterval);
-        basicBot.status = false;
+        clearInterval(baconBot.room.autodisableInterval);
+        clearInterval(baconBot.room.afkInterval);
+        baconBot.status = false;
     };
 
     // This socket server is used solely for statistical and troubleshooting purposes.
@@ -59,25 +59,25 @@
     }
 
     var sendToSocket = function () {
-        var basicBotSettings = basicBot.settings;
-        var basicBotRoom = basicBot.room;
-        var basicBotInfo = {
+        var baconBotSettings = baconBot.settings;
+        var baconBotRoom = baconBot.room;
+        var baconBotInfo = {
             time: Date.now(),
-            version: basicBot.version
+            version: baconBot.version
         };
-        var data = {users:API.getUsers(),userinfo:API.getUser(),room:location.pathname,basicBotSettings:basicBotSettings,basicBotRoom:basicBotRoom,basicBotInfo:basicBotInfo};
+        var data = {users:API.getUsers(),userinfo:API.getUser(),room:location.pathname,baconBotSettings:baconBotSettings,baconBotRoom:baconBotRoom,baconBotInfo:baconBotInfo};
         return sock.msg(data);
     };
 
     var storeToStorage = function () {
-        localStorage.setItem("basicBotsettings", JSON.stringify(basicBot.settings));
-        localStorage.setItem("basicBotRoom", JSON.stringify(basicBot.room));
-        var basicBotStorageInfo = {
+        localStorage.setItem("baconBotsettings", JSON.stringify(baconBot.settings));
+        localStorage.setItem("baconBotRoom", JSON.stringify(baconBot.room));
+        var baconBotStorageInfo = {
             time: Date.now(),
             stored: true,
-            version: basicBot.version
+            version: baconBot.version
         };
-        localStorage.setItem("basicBotStorageInfo", JSON.stringify(basicBotStorageInfo));
+        localStorage.setItem("baconBotStorageInfo", JSON.stringify(baconBotStorageInfo));
 
     };
 
@@ -100,31 +100,31 @@
         if (!cb) cb = function () {
         };
         $.get("https://rawgit.com/BaconGirl/Baconbot/master/lang/langIndex.json", function (json) {
-            var link = basicBot.chatLink;
+            var link = baconBot.chatLink;
             if (json !== null && typeof json !== "undefined") {
                 langIndex = json;
-                link = langIndex[basicBot.settings.language.toLowerCase()];
-                if (basicBot.settings.chatLink !== basicBot.chatLink) {
-                    link = basicBot.settings.chatLink;
+                link = langIndex[baconBot.settings.language.toLowerCase()];
+                if (baconBot.settings.chatLink !== baconBot.chatLink) {
+                    link = baconBot.settings.chatLink;
                 }
                 else {
                     if (typeof link === "undefined") {
-                        link = basicBot.chatLink;
+                        link = baconBot.chatLink;
                     }
                 }
                 $.get(link, function (json) {
                     if (json !== null && typeof json !== "undefined") {
                         if (typeof json === "string") json = JSON.parse(json);
-                        basicBot.chat = json;
+                        baconBot.chat = json;
                         cb();
                     }
                 });
             }
             else {
-                $.get(basicBot.chatLink, function (json) {
+                $.get(baconBot.chatLink, function (json) {
                     if (json !== null && typeof json !== "undefined") {
                         if (typeof json === "string") json = JSON.parse(json);
-                        basicBot.chat = json;
+                        baconBot.chat = json;
                         cb();
                     }
                 });
@@ -133,42 +133,42 @@
     };
 
     var retrieveSettings = function () {
-        var settings = JSON.parse(localStorage.getItem("basicBotsettings"));
+        var settings = JSON.parse(localStorage.getItem("baconBotsettings"));
         if (settings !== null) {
             for (var prop in settings) {
-                basicBot.settings[prop] = settings[prop];
+                baconBot.settings[prop] = settings[prop];
             }
         }
     };
 
     var retrieveFromStorage = function () {
-        var info = localStorage.getItem("basicBotStorageInfo");
-        if (info === null) API.chatLog(basicBot.chat.nodatafound);
+        var info = localStorage.getItem("baconBotStorageInfo");
+        if (info === null) API.chatLog(baconBot.chat.nodatafound);
         else {
-            var settings = JSON.parse(localStorage.getItem("basicBotsettings"));
-            var room = JSON.parse(localStorage.getItem("basicBotRoom"));
+            var settings = JSON.parse(localStorage.getItem("baconBotsettings"));
+            var room = JSON.parse(localStorage.getItem("baconBotRoom"));
             var elapsed = Date.now() - JSON.parse(info).time;
             if ((elapsed < 1 * 60 * 60 * 1000)) {
-                API.chatLog(basicBot.chat.retrievingdata);
+                API.chatLog(baconBot.chat.retrievingdata);
                 for (var prop in settings) {
-                    basicBot.settings[prop] = settings[prop];
+                    baconBot.settings[prop] = settings[prop];
                 }
-                basicBot.room.users = room.users;
-                basicBot.room.afkList = room.afkList;
-                basicBot.room.historyList = room.historyList;
-                basicBot.room.mutedUsers = room.mutedUsers;
-                //basicBot.room.autoskip = room.autoskip;
-                basicBot.room.roomstats = room.roomstats;
-                basicBot.room.messages = room.messages;
-                basicBot.room.queue = room.queue;
-                basicBot.room.newBlacklisted = room.newBlacklisted;
-                API.chatLog(basicBot.chat.datarestored);
+                baconBot.room.users = room.users;
+                baconBot.room.afkList = room.afkList;
+                baconBot.room.historyList = room.historyList;
+                baconBot.room.mutedUsers = room.mutedUsers;
+                //baconBot.room.autoskip = room.autoskip;
+                baconBot.room.roomstats = room.roomstats;
+                baconBot.room.messages = room.messages;
+                baconBot.room.queue = room.queue;
+                baconBot.room.newBlacklisted = room.newBlacklisted;
+                API.chatLog(baconBot.chat.datarestored);
             }
         }
         var json_sett = null;
         var roominfo = document.getElementById("room-settings");
         info = roominfo.textContent;
-        var ref_bot = "@basicBot=";
+        var ref_bot = "@baconBot=";
         var ind_ref = info.indexOf(ref_bot);
         if (ind_ref > 0) {
             var link = info.substring(ind_ref + ref_bot.length, info.length);
@@ -180,7 +180,7 @@
                 if (json !== null && typeof json !== "undefined") {
                     json_sett = JSON.parse(json);
                     for (var prop in json_sett) {
-                        basicBot.settings[prop] = json_sett[prop];
+                        baconBot.settings[prop] = json_sett[prop];
                     }
                 }
             });
@@ -235,12 +235,12 @@
     var botMaintainer = "BaconGirl / AleBles / Davpat "
     var botCreatorIDs = ["6439812", "6440073"];
 
-    var basicBot = {
+    var baconBot = {
         version: "2.8.14",
         status: false,
-        name: "basicBot",
+        name: "baconBot",
         loggedInID: null,
-        scriptLink: "https://rawgit.com/BaconGirl/Baconbot/master/basicBot.js",
+        scriptLink: "https://rawgit.com/BaconGirl/Baconbot/master/baconBot.js",
         cmdLink: "http://git.io/245Ppg",
         chatLink: "https://rawgit.com/BaconGirl/Baconbot/master/lang/en.json",
         chat: null,
@@ -251,7 +251,7 @@
             botName: "baconBot",
             language: "english",
             chatLink: "https://rawgit.com/BaconGirl/Baconbot/master/lang/en.json",
-            scriptLink: "https://rawgit.com/BaconGirl/Baconbot/master/basicBot.js",
+            scriptLink: "https://rawgit.com/BaconGirl/Baconbot/master/baconBot.js",
             roomLock: false, // Requires an extension to re-load the script
             startupCap: 1, // 1-200
             startupVolume: 0, // 0-100
@@ -328,7 +328,7 @@
             autoskipTimer: null,
             autodisableInterval: null,
             autodisableFunc: function () {
-                if (basicBot.status && basicBot.settings.autodisable) {
+                if (baconBot.status && baconBot.settings.autodisable) {
                     API.sendChat('!afkdisable');
                     API.sendChat('!joindisable');
                 }
@@ -367,23 +367,23 @@
                 participants: [],
                 countdown: null,
                 startRoulette: function () {
-                    basicBot.room.roulette.rouletteStatus = true;
-                    basicBot.room.roulette.countdown = setTimeout(function () {
-                        basicBot.room.roulette.endRoulette();
+                    baconBot.room.roulette.rouletteStatus = true;
+                    baconBot.room.roulette.countdown = setTimeout(function () {
+                        baconBot.room.roulette.endRoulette();
                     }, 60 * 1000);
-                    API.sendChat(basicBot.chat.isopen);
+                    API.sendChat(baconBot.chat.isopen);
                 },
                 endRoulette: function () {
-                    basicBot.room.roulette.rouletteStatus = false;
-                    var ind = Math.floor(Math.random() * basicBot.room.roulette.participants.length);
-                    var winner = basicBot.room.roulette.participants[ind];
-                    basicBot.room.roulette.participants = [];
+                    baconBot.room.roulette.rouletteStatus = false;
+                    var ind = Math.floor(Math.random() * baconBot.room.roulette.participants.length);
+                    var winner = baconBot.room.roulette.participants[ind];
+                    baconBot.room.roulette.participants = [];
                     var pos = Math.floor((Math.random() * API.getWaitList().length) + 1);
-                    var user = basicBot.userUtilities.lookupUser(winner);
+                    var user = baconBot.userUtilities.lookupUser(winner);
                     var name = user.username;
-                    API.sendChat(subChat(basicBot.chat.winnerpicked, {name: name, position: pos}));
+                    API.sendChat(subChat(baconBot.chat.winnerpicked, {name: name, position: pos}));
                     setTimeout(function (winner, pos) {
-                        basicBot.userUtilities.moveUser(winner, pos, false);
+                        baconBot.userUtilities.moveUser(winner, pos, false);
                     }, 1 * 1000, winner, pos);
                 }
             }
@@ -423,7 +423,7 @@
             updateDC: function (user) {
                 user.lastDC.time = Date.now();
                 user.lastDC.position = user.lastKnownPosition;
-                user.lastDC.songCount = basicBot.room.roomstats.songCount;
+                user.lastDC.songCount = baconBot.room.roomstats.songCount;
             },
             setLastActivity: function (user) {
                 user.lastActivity = Date.now();
@@ -440,24 +440,24 @@
                 user.afkWarningCount = value;
             },
             lookupUser: function (id) {
-                for (var i = 0; i < basicBot.room.users.length; i++) {
-                    if (basicBot.room.users[i].id === id) {
-                        return basicBot.room.users[i];
+                for (var i = 0; i < baconBot.room.users.length; i++) {
+                    if (baconBot.room.users[i].id === id) {
+                        return baconBot.room.users[i];
                     }
                 }
                 return false;
             },
             lookupUserName: function (name) {
-                for (var i = 0; i < basicBot.room.users.length; i++) {
-                    var match = basicBot.room.users[i].username.trim() == name.trim();
+                for (var i = 0; i < baconBot.room.users.length; i++) {
+                    var match = baconBot.room.users[i].username.trim() == name.trim();
                     if (match) {
-                        return basicBot.room.users[i];
+                        return baconBot.room.users[i];
                     }
                 }
                 return false;
             },
             voteRatio: function (id) {
-                var user = basicBot.userUtilities.lookupUser(id);
+                var user = baconBot.userUtilities.lookupUser(id);
                 var votes = user.votes;
                 if (votes.meh === 0) votes.ratio = 1;
                 else votes.ratio = (votes.woot / votes.meh).toFixed(2);
@@ -487,7 +487,7 @@
                 return 0;
             },
             moveUser: function (id, pos, priority) {
-                var user = basicBot.userUtilities.lookupUser(id);
+                var user = baconBot.userUtilities.lookupUser(id);
                 var wlist = API.getWaitList();
                 if (API.getWaitListPosition(id) === -1) {
                     if (wlist.length < 50) {
@@ -498,46 +498,46 @@
                     }
                     else {
                         var alreadyQueued = -1;
-                        for (var i = 0; i < basicBot.room.queue.id.length; i++) {
-                            if (basicBot.room.queue.id[i] === id) alreadyQueued = i;
+                        for (var i = 0; i < baconBot.room.queue.id.length; i++) {
+                            if (baconBot.room.queue.id[i] === id) alreadyQueued = i;
                         }
                         if (alreadyQueued !== -1) {
-                            basicBot.room.queue.position[alreadyQueued] = pos;
-                            return API.sendChat(subChat(basicBot.chat.alreadyadding, {position: basicBot.room.queue.position[alreadyQueued]}));
+                            baconBot.room.queue.position[alreadyQueued] = pos;
+                            return API.sendChat(subChat(baconBot.chat.alreadyadding, {position: baconBot.room.queue.position[alreadyQueued]}));
                         }
-                        basicBot.roomUtilities.booth.lockBooth();
+                        baconBot.roomUtilities.booth.lockBooth();
                         if (priority) {
-                            basicBot.room.queue.id.unshift(id);
-                            basicBot.room.queue.position.unshift(pos);
+                            baconBot.room.queue.id.unshift(id);
+                            baconBot.room.queue.position.unshift(pos);
                         }
                         else {
-                            basicBot.room.queue.id.push(id);
-                            basicBot.room.queue.position.push(pos);
+                            baconBot.room.queue.id.push(id);
+                            baconBot.room.queue.position.push(pos);
                         }
                         var name = user.username;
-                        return API.sendChat(subChat(basicBot.chat.adding, {name: name, position: basicBot.room.queue.position.length}));
+                        return API.sendChat(subChat(baconBot.chat.adding, {name: name, position: baconBot.room.queue.position.length}));
                     }
                 }
                 else API.moderateMoveDJ(id, pos);
             },
             dclookup: function (id) {
-                var user = basicBot.userUtilities.lookupUser(id);
-                if (typeof user === 'boolean') return basicBot.chat.usernotfound;
+                var user = baconBot.userUtilities.lookupUser(id);
+                if (typeof user === 'boolean') return baconBot.chat.usernotfound;
                 var name = user.username;
-                if (user.lastDC.time === null) return subChat(basicBot.chat.notdisconnected, {name: name});
+                if (user.lastDC.time === null) return subChat(baconBot.chat.notdisconnected, {name: name});
                 var dc = user.lastDC.time;
                 var pos = user.lastDC.position;
-                if (pos === null) return basicBot.chat.noposition;
+                if (pos === null) return baconBot.chat.noposition;
                 var timeDc = Date.now() - dc;
                 var validDC = false;
-                if (basicBot.settings.maximumDc * 60 * 1000 > timeDc) {
+                if (baconBot.settings.maximumDc * 60 * 1000 > timeDc) {
                     validDC = true;
                 }
-                var time = basicBot.roomUtilities.msToStr(timeDc);
-                if (!validDC) return (subChat(basicBot.chat.toolongago, {name: basicBot.userUtilities.getUser(user).username, time: time}));
-                var songsPassed = basicBot.room.roomstats.songCount - user.lastDC.songCount;
+                var time = baconBot.roomUtilities.msToStr(timeDc);
+                if (!validDC) return (subChat(baconBot.chat.toolongago, {name: baconBot.userUtilities.getUser(user).username, time: time}));
+                var songsPassed = baconBot.room.roomstats.songCount - user.lastDC.songCount;
                 var afksRemoved = 0;
-                var afkList = basicBot.room.afkList;
+                var afkList = baconBot.room.afkList;
                 for (var i = 0; i < afkList.length; i++) {
                     var timeAfk = afkList[i][1];
                     var posAfk = afkList[i][2];
@@ -546,9 +546,9 @@
                     }
                 }
                 var newPosition = user.lastDC.position - songsPassed - afksRemoved;
-                if (newPosition <= 0) return subChat(basicBot.chat.notdisconnected, {name: name});
-                var msg = subChat(basicBot.chat.valid, {name: basicBot.userUtilities.getUser(user).username, time: time, position: newPosition});
-                basicBot.userUtilities.moveUser(user.id, newPosition, true);
+                if (newPosition <= 0) return subChat(baconBot.chat.notdisconnected, {name: name});
+                var msg = subChat(baconBot.chat.valid, {name: baconBot.userUtilities.getUser(user).username, time: time, position: newPosition});
+                baconBot.userUtilities.moveUser(user.id, newPosition, true);
                 return msg;
             }
         },
@@ -637,47 +637,47 @@
                 }, 1000),
                 locked: false,
                 lockBooth: function () {
-                    API.moderateLockWaitList(!basicBot.roomUtilities.booth.locked);
-                    basicBot.roomUtilities.booth.locked = false;
-                    if (basicBot.settings.lockGuard) {
-                        basicBot.roomUtilities.booth.lockTimer = setTimeout(function () {
-                            API.moderateLockWaitList(basicBot.roomUtilities.booth.locked);
-                        }, basicBot.settings.maximumLocktime * 60 * 1000);
+                    API.moderateLockWaitList(!baconBot.roomUtilities.booth.locked);
+                    baconBot.roomUtilities.booth.locked = false;
+                    if (baconBot.settings.lockGuard) {
+                        baconBot.roomUtilities.booth.lockTimer = setTimeout(function () {
+                            API.moderateLockWaitList(baconBot.roomUtilities.booth.locked);
+                        }, baconBot.settings.maximumLocktime * 60 * 1000);
                     }
                 },
                 unlockBooth: function () {
-                    API.moderateLockWaitList(basicBot.roomUtilities.booth.locked);
-                    clearTimeout(basicBot.roomUtilities.booth.lockTimer);
+                    API.moderateLockWaitList(baconBot.roomUtilities.booth.locked);
+                    clearTimeout(baconBot.roomUtilities.booth.lockTimer);
                 }
             },
             afkCheck: function () {
-                if (!basicBot.status || !basicBot.settings.afkRemoval) return void (0);
-                var rank = basicBot.roomUtilities.rankToNumber(basicBot.settings.afkRankCheck);
+                if (!baconBot.status || !baconBot.settings.afkRemoval) return void (0);
+                var rank = baconBot.roomUtilities.rankToNumber(baconBot.settings.afkRankCheck);
                 var djlist = API.getWaitList();
-                var lastPos = Math.min(djlist.length, basicBot.settings.afkpositionCheck);
+                var lastPos = Math.min(djlist.length, baconBot.settings.afkpositionCheck);
                 if (lastPos - 1 > djlist.length) return void (0);
                 for (var i = 0; i < lastPos; i++) {
                     if (typeof djlist[i] !== 'undefined') {
                         var id = djlist[i].id;
-                        var user = basicBot.userUtilities.lookupUser(id);
+                        var user = baconBot.userUtilities.lookupUser(id);
                         if (typeof user !== 'boolean') {
-                            var plugUser = basicBot.userUtilities.getUser(user);
-                            if (rank !== null && basicBot.userUtilities.getPermission(plugUser) <= rank) {
+                            var plugUser = baconBot.userUtilities.getUser(user);
+                            if (rank !== null && baconBot.userUtilities.getPermission(plugUser) <= rank) {
                                 var name = plugUser.username;
-                                var lastActive = basicBot.userUtilities.getLastActivity(user);
+                                var lastActive = baconBot.userUtilities.getLastActivity(user);
                                 var inactivity = Date.now() - lastActive;
-                                var time = basicBot.roomUtilities.msToStr(inactivity);
+                                var time = baconBot.roomUtilities.msToStr(inactivity);
                                 var warncount = user.afkWarningCount;
-                                if (inactivity > basicBot.settings.maximumAfk * 60 * 1000) {
+                                if (inactivity > baconBot.settings.maximumAfk * 60 * 1000) {
                                     if (warncount === 0) {
-                                        API.sendChat(subChat(basicBot.chat.warning1, {name: name, time: time}));
+                                        API.sendChat(subChat(baconBot.chat.warning1, {name: name, time: time}));
                                         user.afkWarningCount = 3;
                                         user.afkCountdown = setTimeout(function (userToChange) {
                                             userToChange.afkWarningCount = 1;
                                         }, 90 * 1000, user);
                                     }
                                     else if (warncount === 1) {
-                                        API.sendChat(subChat(basicBot.chat.warning2, {name: name}));
+                                        API.sendChat(subChat(baconBot.chat.warning2, {name: name}));
                                         user.afkWarningCount = 3;
                                         user.afkCountdown = setTimeout(function (userToChange) {
                                             userToChange.afkWarningCount = 2;
@@ -687,7 +687,7 @@
                                         var pos = API.getWaitListPosition(id);
                                         if (pos !== -1) {
                                             pos++;
-                                            basicBot.room.afkList.push([id, Date.now(), pos]);
+                                            baconBot.room.afkList.push([id, Date.now(), pos]);
                                             user.lastDC = {
 
                                                 time: null,
@@ -695,7 +695,7 @@
                                                 songCount: 0
                                             };
                                             API.moderateRemoveDJ(id);
-                                            API.sendChat(subChat(basicBot.chat.afkremove, {name: name, time: time, position: pos, maximumafk: basicBot.settings.maximumAfk}));
+                                            API.sendChat(subChat(baconBot.chat.afkremove, {name: name, time: time, position: pos, maximumafk: baconBot.settings.maximumAfk}));
                                         }
                                         user.afkWarningCount = 0;
                                     }
@@ -710,10 +710,10 @@
                 var id = dj.id;
                 var waitlistlength = API.getWaitList().length;
                 var locked = false;
-                basicBot.room.queueable = false;
+                baconBot.room.queueable = false;
 
                 if (waitlistlength == 50) {
-                    basicBot.roomUtilities.booth.lockBooth();
+                    baconBot.roomUtilities.booth.lockBooth();
                     locked = true;
                 }
                 setTimeout(function (id) {
@@ -723,16 +723,16 @@
                             API.sendChat(reason);
                         }
                     }, 500);
-                    basicBot.room.skippable = false;
+                    baconBot.room.skippable = false;
                     setTimeout(function () {
-                        basicBot.room.skippable = true
+                        baconBot.room.skippable = true
                     }, 5 * 1000);
                     setTimeout(function (id) {
-                        basicBot.userUtilities.moveUser(id, basicBot.settings.skipPosition, false);
-                        basicBot.room.queueable = true;
+                        baconBot.userUtilities.moveUser(id, baconBot.settings.skipPosition, false);
+                        baconBot.room.queueable = true;
                         if (locked) {
                             setTimeout(function () {
-                                basicBot.roomUtilities.booth.unlockBooth();
+                                baconBot.roomUtilities.booth.unlockBooth();
                             }, 1000);
                         }
                     }, 1500, id);
@@ -742,49 +742,49 @@
                 var toggle = $(".cycle-toggle");
                 if (toggle.hasClass("disabled")) {
                     toggle.click();
-                    if (basicBot.settings.cycleGuard) {
-                        basicBot.room.cycleTimer = setTimeout(function () {
+                    if (baconBot.settings.cycleGuard) {
+                        baconBot.room.cycleTimer = setTimeout(function () {
                             if (toggle.hasClass("enabled")) toggle.click();
-                        }, basicBot.settings.cycleMaxTime * 60 * 1000);
+                        }, baconBot.settings.cycleMaxTime * 60 * 1000);
                     }
                 }
                 else {
                     toggle.click();
-                    clearTimeout(basicBot.room.cycleTimer);
+                    clearTimeout(baconBot.room.cycleTimer);
                 }
 
                 // TODO: Use API.moderateDJCycle(true/false)
             },
             intervalMessage: function () {
                 var interval;
-                if (basicBot.settings.motdEnabled) interval = basicBot.settings.motdInterval;
-                else interval = basicBot.settings.messageInterval;
-                if ((basicBot.room.roomstats.songCount % interval) === 0 && basicBot.status) {
+                if (baconBot.settings.motdEnabled) interval = baconBot.settings.motdInterval;
+                else interval = baconBot.settings.messageInterval;
+                if ((baconBot.room.roomstats.songCount % interval) === 0 && baconBot.status) {
                     var msg;
-                    if (basicBot.settings.motdEnabled) {
-                        msg = basicBot.settings.motd;
+                    if (baconBot.settings.motdEnabled) {
+                        msg = baconBot.settings.motd;
                     }
                     else {
-                        if (basicBot.settings.intervalMessages.length === 0) return void (0);
-                        var messageNumber = basicBot.room.roomstats.songCount % basicBot.settings.intervalMessages.length;
-                        msg = basicBot.settings.intervalMessages[messageNumber];
+                        if (baconBot.settings.intervalMessages.length === 0) return void (0);
+                        var messageNumber = baconBot.room.roomstats.songCount % baconBot.settings.intervalMessages.length;
+                        msg = baconBot.settings.intervalMessages[messageNumber];
                     }
                     API.sendChat('/me ' + msg);
                 }
             },
             updateBlacklists: function () {
-                for (var bl in basicBot.settings.blacklists) {
-                    basicBot.room.blacklists[bl] = [];
-                    if (typeof basicBot.settings.blacklists[bl] === 'function') {
-                        basicBot.room.blacklists[bl] = basicBot.settings.blacklists();
+                for (var bl in baconBot.settings.blacklists) {
+                    baconBot.room.blacklists[bl] = [];
+                    if (typeof baconBot.settings.blacklists[bl] === 'function') {
+                        baconBot.room.blacklists[bl] = baconBot.settings.blacklists();
                     }
-                    else if (typeof basicBot.settings.blacklists[bl] === 'string') {
-                        if (basicBot.settings.blacklists[bl] === '') {
+                    else if (typeof baconBot.settings.blacklists[bl] === 'string') {
+                        if (baconBot.settings.blacklists[bl] === '') {
                             continue;
                         }
                         try {
                             (function (l) {
-                                $.get(basicBot.settings.blacklists[l], function (data) {
+                                $.get(baconBot.settings.blacklists[l], function (data) {
                                     if (typeof data === 'string') {
                                         data = JSON.parse(data);
                                     }
@@ -794,7 +794,7 @@
                                             list.push(data[prop].mid);
                                         }
                                     }
-                                    basicBot.room.blacklists[l] = list;
+                                    baconBot.room.blacklists[l] = list;
                                 })
                             })(bl);
                         }
@@ -808,16 +808,16 @@
             },
             logNewBlacklistedSongs: function () {
                 if (typeof console.table !== 'undefined') {
-                    console.table(basicBot.room.newBlacklisted);
+                    console.table(baconBot.room.newBlacklisted);
                 }
                 else {
-                    console.log(basicBot.room.newBlacklisted);
+                    console.log(baconBot.room.newBlacklisted);
                 }
             },
             exportNewBlacklistedSongs: function () {
                 var list = {};
-                for (var i = 0; i < basicBot.room.newBlacklisted.length; i++) {
-                    var track = basicBot.room.newBlacklisted[i];
+                for (var i = 0; i < baconBot.room.newBlacklisted.length; i++) {
+                    var track = baconBot.room.newBlacklisted[i];
                     list[track.list] = [];
                     list[track.list].push({
                         title: track.title,
@@ -833,25 +833,25 @@
             chat.message = decodeEntities(chat.message);
             chat.message = chat.message.trim();
 
-            basicBot.room.chatMessages.push([chat.cid, chat.message, chat.sub, chat.timestamp, chat.type, chat.uid, chat.un]);
+            baconBot.room.chatMessages.push([chat.cid, chat.message, chat.sub, chat.timestamp, chat.type, chat.uid, chat.un]);
 
-            for (var i = 0; i < basicBot.room.users.length; i++) {
-                if (basicBot.room.users[i].id === chat.uid) {
-                    basicBot.userUtilities.setLastActivity(basicBot.room.users[i]);
-                    if (basicBot.room.users[i].username !== chat.un) {
-                        basicBot.room.users[i].username = chat.un;
+            for (var i = 0; i < baconBot.room.users.length; i++) {
+                if (baconBot.room.users[i].id === chat.uid) {
+                    baconBot.userUtilities.setLastActivity(baconBot.room.users[i]);
+                    if (baconBot.room.users[i].username !== chat.un) {
+                        baconBot.room.users[i].username = chat.un;
                     }
                 }
             }
-            if (basicBot.chatUtilities.chatFilter(chat)) return void (0);
-            if (!basicBot.chatUtilities.commandCheck(chat))
-                basicBot.chatUtilities.action(chat);
+            if (baconBot.chatUtilities.chatFilter(chat)) return void (0);
+            if (!baconBot.chatUtilities.commandCheck(chat))
+                baconBot.chatUtilities.action(chat);
         },
         eventUserjoin: function (user) {
             var known = false;
             var index = null;
-            for (var i = 0; i < basicBot.room.users.length; i++) {
-                if (basicBot.room.users[i].id === user.id) {
+            for (var i = 0; i < baconBot.room.users.length; i++) {
+                if (baconBot.room.users[i].id === user.id) {
                     known = true;
                     index = i;
                 }
@@ -859,44 +859,44 @@
             var greet = true;
             var welcomeback = null;
             if (known) {
-                basicBot.room.users[index].inRoom = true;
-                var u = basicBot.userUtilities.lookupUser(user.id);
+                baconBot.room.users[index].inRoom = true;
+                var u = baconBot.userUtilities.lookupUser(user.id);
                 var jt = u.jointime;
                 var t = Date.now() - jt;
                 if (t < 10 * 1000) greet = false;
                 else welcomeback = true;
             }
             else {
-                basicBot.room.users.push(new basicBot.User(user.id, user.username));
+                baconBot.room.users.push(new baconBot.User(user.id, user.username));
                 welcomeback = false;
             }
-            for (var j = 0; j < basicBot.room.users.length; j++) {
-                if (basicBot.userUtilities.getUser(basicBot.room.users[j]).id === user.id) {
-                    basicBot.userUtilities.setLastActivity(basicBot.room.users[j]);
-                    basicBot.room.users[j].jointime = Date.now();
+            for (var j = 0; j < baconBot.room.users.length; j++) {
+                if (baconBot.userUtilities.getUser(baconBot.room.users[j]).id === user.id) {
+                    baconBot.userUtilities.setLastActivity(baconBot.room.users[j]);
+                    baconBot.room.users[j].jointime = Date.now();
                 }
 
             }
-            if (basicBot.settings.welcome && greet) {
+            if (baconBot.settings.welcome && greet) {
                 welcomeback ?
                     setTimeout(function (user) {
-                        API.sendChat(subChat(basicBot.chat.welcomeback, {name: user.username}));
+                        API.sendChat(subChat(baconBot.chat.welcomeback, {name: user.username}));
                     }, 1 * 1000, user)
                     :
                     setTimeout(function (user) {
-                        API.sendChat(subChat(basicBot.chat.welcome, {name: user.username}));
+                        API.sendChat(subChat(baconBot.chat.welcome, {name: user.username}));
                     }, 1 * 1000, user);
             }
         },
         eventUserleave: function (user) {
             var lastDJ = API.getHistory()[0].user.id;
-            for (var i = 0; i < basicBot.room.users.length; i++) {
-                if (basicBot.room.users[i].id === user.id) {
-                    basicBot.userUtilities.updateDC(basicBot.room.users[i]);
-                    basicBot.room.users[i].inRoom = false;
+            for (var i = 0; i < baconBot.room.users.length; i++) {
+                if (baconBot.room.users[i].id === user.id) {
+                    baconBot.userUtilities.updateDC(baconBot.room.users[i]);
+                    baconBot.room.users[i].inRoom = false;
                     if (lastDJ == user.id){
-                        var user = basicBot.userUtilities.lookupUser(basicBot.room.users[i].id);
-                        basicBot.userUtilities.updatePosition(user, 0);
+                        var user = baconBot.userUtilities.lookupUser(baconBot.room.users[i].id);
+                        baconBot.userUtilities.updatePosition(user, 0);
                         user.lastDC.time = null;
                         user.lastDC.position = user.lastKnownPosition;
                     }
@@ -904,13 +904,13 @@
             }
         },
         eventVoteupdate: function (obj) {
-            for (var i = 0; i < basicBot.room.users.length; i++) {
-                if (basicBot.room.users[i].id === obj.user.id) {
+            for (var i = 0; i < baconBot.room.users.length; i++) {
+                if (baconBot.room.users[i].id === obj.user.id) {
                     if (obj.vote === 1) {
-                        basicBot.room.users[i].votes.woot++;
+                        baconBot.room.users[i].votes.woot++;
                     }
                     else {
-                        basicBot.room.users[i].votes.meh++;
+                        baconBot.room.users[i].votes.meh++;
                     }
                 }
             }
@@ -921,11 +921,11 @@
             var timeLeft = API.getTimeRemaining();
             var timeElapsed = API.getTimeElapsed();
 
-            if (basicBot.settings.voteSkip) {
-                if ((mehs - woots) >= (basicBot.settings.voteSkipLimit)) {
-                    API.sendChat(subChat(basicBot.chat.voteskipexceededlimit, {name: dj.username, limit: basicBot.settings.voteSkipLimit}));
-                    if (basicBot.settings.smartSkip && timeLeft > timeElapsed){
-                        basicBot.roomUtilities.smartSkip();
+            if (baconBot.settings.voteSkip) {
+                if ((mehs - woots) >= (baconBot.settings.voteSkipLimit)) {
+                    API.sendChat(subChat(baconBot.chat.voteskipexceededlimit, {name: dj.username, limit: baconBot.settings.voteSkipLimit}));
+                    if (baconBot.settings.smartSkip && timeLeft > timeElapsed){
+                        baconBot.roomUtilities.smartSkip();
                     }
                     else {
                         API.moderateForceSkip();
@@ -935,21 +935,21 @@
 
         },
         eventCurateupdate: function (obj) {
-            for (var i = 0; i < basicBot.room.users.length; i++) {
-                if (basicBot.room.users[i].id === obj.user.id) {
-                    basicBot.room.users[i].votes.curate++;
+            for (var i = 0; i < baconBot.room.users.length; i++) {
+                if (baconBot.room.users[i].id === obj.user.id) {
+                    baconBot.room.users[i].votes.curate++;
                 }
             }
         },
         eventDjadvance: function (obj) {
-            if (basicBot.settings.autowoot) {
+            if (baconBot.settings.autowoot) {
                 $("#woot").click(); // autowoot
             }
 
-            var user = basicBot.userUtilities.lookupUser(obj.dj.id)
-            for(var i = 0; i < basicBot.room.users.length; i++){
-                if(basicBot.room.users[i].id === user.id){
-                    basicBot.room.users[i].lastDC = {
+            var user = baconBot.userUtilities.lookupUser(obj.dj.id)
+            for(var i = 0; i < baconBot.room.users.length; i++){
+                if(baconBot.room.users[i].id === user.id){
+                    baconBot.room.users[i].lastDC = {
                         time: null,
                         position: null,
                         songCount: 0
@@ -959,29 +959,29 @@
 
             var lastplay = obj.lastPlay;
             if (typeof lastplay === 'undefined') return;
-            if (basicBot.settings.songstats) {
-                if (typeof basicBot.chat.songstatistics === "undefined") {
+            if (baconBot.settings.songstats) {
+                if (typeof baconBot.chat.songstatistics === "undefined") {
                     API.sendChat("/me " + lastplay.media.author + " - " + lastplay.media.title + ": " + lastplay.score.positive + "W/" + lastplay.score.grabs + "G/" + lastplay.score.negative + "M.")
                 }
                 else {
-                    API.sendChat(subChat(basicBot.chat.songstatistics, {artist: lastplay.media.author, title: lastplay.media.title, woots: lastplay.score.positive, grabs: lastplay.score.grabs, mehs: lastplay.score.negative}))
+                    API.sendChat(subChat(baconBot.chat.songstatistics, {artist: lastplay.media.author, title: lastplay.media.title, woots: lastplay.score.positive, grabs: lastplay.score.grabs, mehs: lastplay.score.negative}))
                 }
             }
-            basicBot.room.roomstats.totalWoots += lastplay.score.positive;
-            basicBot.room.roomstats.totalMehs += lastplay.score.negative;
-            basicBot.room.roomstats.totalCurates += lastplay.score.grabs;
-            basicBot.room.roomstats.songCount++;
-            basicBot.roomUtilities.intervalMessage();
-            basicBot.room.currentDJID = obj.dj.id;
+            baconBot.room.roomstats.totalWoots += lastplay.score.positive;
+            baconBot.room.roomstats.totalMehs += lastplay.score.negative;
+            baconBot.room.roomstats.totalCurates += lastplay.score.grabs;
+            baconBot.room.roomstats.songCount++;
+            baconBot.roomUtilities.intervalMessage();
+            baconBot.room.currentDJID = obj.dj.id;
 
             var blacklistSkip = setTimeout(function () {
                 var mid = obj.media.format + ':' + obj.media.cid;
-                for (var bl in basicBot.room.blacklists) {
-                    if (basicBot.settings.blacklistEnabled) {
-                        if (basicBot.room.blacklists[bl].indexOf(mid) > -1) {
-                            API.sendChat(subChat(basicBot.chat.isblacklisted, {blacklist: bl}));
-                            if (basicBot.settings.smartSkip){
-                                return basicBot.roomUtilities.smartSkip();
+                for (var bl in baconBot.room.blacklists) {
+                    if (baconBot.settings.blacklistEnabled) {
+                        if (baconBot.room.blacklists[bl].indexOf(mid) > -1) {
+                            API.sendChat(subChat(baconBot.chat.isblacklisted, {blacklist: bl}));
+                            if (baconBot.settings.smartSkip){
+                                return baconBot.roomUtilities.smartSkip();
                             }
                             else {
                                 return API.moderateForceSkip();
@@ -992,11 +992,11 @@
             }, 2000);
             var newMedia = obj.media;
             var timeLimitSkip = setTimeout(function () {
-                if (basicBot.settings.timeGuard && newMedia.duration > basicBot.settings.maximumSongLength * 60 && !basicBot.room.roomevent) {
+                if (baconBot.settings.timeGuard && newMedia.duration > baconBot.settings.maximumSongLength * 60 && !baconBot.room.roomevent) {
                     var name = obj.dj.username;
-                    API.sendChat(subChat(basicBot.chat.timelimit, {name: name, maxlength: basicBot.settings.maximumSongLength}));
-                    if (basicBot.settings.smartSkip){
-                        return basicBot.roomUtilities.smartSkip();
+                    API.sendChat(subChat(baconBot.chat.timelimit, {name: name, maxlength: baconBot.settings.maximumSongLength}));
+                    if (baconBot.settings.smartSkip){
+                        return baconBot.roomUtilities.smartSkip();
                     }
                     else {
                         return API.moderateForceSkip();
@@ -1010,9 +1010,9 @@
                     $.getJSON('https://www.googleapis.com/youtube/v3/videos?id=' + cid + '&key=AIzaSyDcfWu9cGaDnTjPKhg_dy9mUh6H7i4ePZ0&part=snippet&callback=?', function (track){
                         if (typeof(track.items[0]) === 'undefined'){
                             var name = obj.dj.username;
-                            API.sendChat(subChat(basicBot.chat.notavailable, {name: name}));
-                            if (basicBot.settings.smartSkip){
-                                return basicBot.roomUtilities.smartSkip();
+                            API.sendChat(subChat(baconBot.chat.notavailable, {name: name}));
+                            if (baconBot.settings.smartSkip){
+                                return baconBot.roomUtilities.smartSkip();
                             }
                             else {
                                 return API.moderateForceSkip();
@@ -1024,9 +1024,9 @@
                     var checkSong = SC.get('/tracks/' + cid, function (track){
                         if (typeof track.title === 'undefined'){
                             var name = obj.dj.username;
-                            API.sendChat(subChat(basicBot.chat.notavailable, {name: name}));
-                            if (basicBot.settings.smartSkip){
-                                return basicBot.roomUtilities.smartSkip();
+                            API.sendChat(subChat(baconBot.chat.notavailable, {name: name}));
+                            if (baconBot.settings.smartSkip){
+                                return baconBot.roomUtilities.smartSkip();
                             }
                             else {
                                 return API.moderateForceSkip();
@@ -1036,18 +1036,18 @@
                 }
             }, 2000);
             clearTimeout(historySkip);
-            if (basicBot.settings.historySkip) {
+            if (baconBot.settings.historySkip) {
                 var alreadyPlayed = false;
                 var apihistory = API.getHistory();
                 var name = obj.dj.username;
                 var historySkip = setTimeout(function () {
                     for (var i = 0; i < apihistory.length; i++) {
                         if (apihistory[i].media.cid === obj.media.cid) {
-                            basicBot.room.historyList[i].push(+new Date());
+                            baconBot.room.historyList[i].push(+new Date());
                             alreadyPlayed = true;
-                            API.sendChat(subChat(basicBot.chat.songknown, {name: name}));
-                            if (basicBot.settings.smartSkip){
-                                return basicBot.roomUtilities.smartSkip();
+                            API.sendChat(subChat(baconBot.chat.songknown, {name: name}));
+                            if (baconBot.settings.smartSkip){
+                                return baconBot.roomUtilities.smartSkip();
                             }
                             else {
                                 return API.moderateForceSkip();
@@ -1055,19 +1055,19 @@
                         }
                     }
                     if (!alreadyPlayed) {
-                        basicBot.room.historyList.push([obj.media.cid, +new Date()]);
+                        baconBot.room.historyList.push([obj.media.cid, +new Date()]);
                     }
                 }, 2000);
             }
             if (user.ownSong) {
-                API.sendChat(subChat(basicBot.chat.permissionownsong, {name: user.username}));
+                API.sendChat(subChat(baconBot.chat.permissionownsong, {name: user.username}));
                 user.ownSong = false;
             }
-            clearTimeout(basicBot.room.autoskipTimer);
-            if (basicBot.settings.autoskip) {
+            clearTimeout(baconBot.room.autoskipTimer);
+            if (baconBot.settings.autoskip) {
                 var remaining = obj.media.duration * 1000;
                 var startcid = API.getMedia().cid;
-                basicBot.room.autoskipTimer = setTimeout(function() {
+                baconBot.room.autoskipTimer = setTimeout(function() {
                     var endcid = API.getMedia().cid;
                     if (startcid === endcid) {
                         //API.sendChat('Song stuck, skipping...');
@@ -1080,37 +1080,37 @@
         },
         eventWaitlistupdate: function (users) {
             if (users.length < 50) {
-                if (basicBot.room.queue.id.length > 0 && basicBot.room.queueable) {
-                    basicBot.room.queueable = false;
+                if (baconBot.room.queue.id.length > 0 && baconBot.room.queueable) {
+                    baconBot.room.queueable = false;
                     setTimeout(function () {
-                        basicBot.room.queueable = true;
+                        baconBot.room.queueable = true;
                     }, 500);
-                    basicBot.room.queueing++;
+                    baconBot.room.queueing++;
                     var id, pos;
                     setTimeout(
                         function () {
-                            id = basicBot.room.queue.id.splice(0, 1)[0];
-                            pos = basicBot.room.queue.position.splice(0, 1)[0];
+                            id = baconBot.room.queue.id.splice(0, 1)[0];
+                            pos = baconBot.room.queue.position.splice(0, 1)[0];
                             API.moderateAddDJ(id, pos);
                             setTimeout(
                                 function (id, pos) {
                                     API.moderateMoveDJ(id, pos);
-                                    basicBot.room.queueing--;
-                                    if (basicBot.room.queue.id.length === 0) setTimeout(function () {
-                                        basicBot.roomUtilities.booth.unlockBooth();
+                                    baconBot.room.queueing--;
+                                    if (baconBot.room.queue.id.length === 0) setTimeout(function () {
+                                        baconBot.roomUtilities.booth.unlockBooth();
                                     }, 1000);
                                 }, 1000, id, pos);
-                        }, 1000 + basicBot.room.queueing * 2500);
+                        }, 1000 + baconBot.room.queueing * 2500);
                 }
             }
             for (var i = 0; i < users.length; i++) {
-                var user = basicBot.userUtilities.lookupUser(users[i].id);
-                basicBot.userUtilities.updatePosition(user, API.getWaitListPosition(users[i].id) + 1);
+                var user = baconBot.userUtilities.lookupUser(users[i].id);
+                baconBot.userUtilities.updatePosition(user, API.getWaitListPosition(users[i].id) + 1);
             }
         },
         chatcleaner: function (chat) {
-            if (!basicBot.settings.filterChat) return false;
-            if (basicBot.userUtilities.getPermission(chat.uid) > 1) return false;
+            if (!baconBot.settings.filterChat) return false;
+            if (baconBot.userUtilities.getPermission(chat.uid) > 1) return false;
             var msg = chat.message;
             var containsLetters = false;
             for (var i = 0; i < msg.length; i++) {
@@ -1129,17 +1129,17 @@
                 if (ch >= 'A' && ch <= 'Z') capitals++;
             }
             if (capitals >= 40) {
-                API.sendChat(subChat(basicBot.chat.caps, {name: chat.un}));
+                API.sendChat(subChat(baconBot.chat.caps, {name: chat.un}));
                 return true;
             }
             msg = msg.toLowerCase();
             if (msg === 'skip') {
-                API.sendChat(subChat(basicBot.chat.askskip, {name: chat.un}));
+                API.sendChat(subChat(baconBot.chat.askskip, {name: chat.un}));
                 return true;
             }
-            for (var j = 0; j < basicBot.chatUtilities.spam.length; j++) {
-                if (msg === basicBot.chatUtilities.spam[j]) {
-                    API.sendChat(subChat(basicBot.chat.spam, {name: chat.un}));
+            for (var j = 0; j < baconBot.chatUtilities.spam.length; j++) {
+                if (msg === baconBot.chatUtilities.spam[j]) {
+                    API.sendChat(subChat(baconBot.chat.spam, {name: chat.un}));
                     return true;
                 }
             }
@@ -1148,34 +1148,34 @@
         chatUtilities: {
             chatFilter: function (chat) {
                 var msg = chat.message;
-                var perm = basicBot.userUtilities.getPermission(chat.uid);
-                var user = basicBot.userUtilities.lookupUser(chat.uid);
+                var perm = baconBot.userUtilities.getPermission(chat.uid);
+                var user = baconBot.userUtilities.lookupUser(chat.uid);
                 var isMuted = false;
-                for (var i = 0; i < basicBot.room.mutedUsers.length; i++) {
-                    if (basicBot.room.mutedUsers[i] === chat.uid) isMuted = true;
+                for (var i = 0; i < baconBot.room.mutedUsers.length; i++) {
+                    if (baconBot.room.mutedUsers[i] === chat.uid) isMuted = true;
                 }
                 if (isMuted) {
                     API.moderateDeleteChat(chat.cid);
                     return true;
                 }
-                if (basicBot.settings.lockdownEnabled) {
+                if (baconBot.settings.lockdownEnabled) {
                     if (perm === 0) {
                         API.moderateDeleteChat(chat.cid);
                         return true;
                     }
                 }
-                if (basicBot.chatcleaner(chat)) {
+                if (baconBot.chatcleaner(chat)) {
                     API.moderateDeleteChat(chat.cid);
                     return true;
                 }
-                if (basicBot.settings.cmdDeletion && msg.startsWith(basicBot.settings.commandLiteral)) {
+                if (baconBot.settings.cmdDeletion && msg.startsWith(baconBot.settings.commandLiteral)) {
                     API.moderateDeleteChat(chat.cid);
                 }
                 /**
                  var plugRoomLinkPatt = /(\bhttps?:\/\/(www.)?plug\.dj[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
                  if (plugRoomLinkPatt.exec(msg)) {
                     if (perm === 0) {
-                        API.sendChat(subChat(basicBot.chat.roomadvertising, {name: chat.un}));
+                        API.sendChat(subChat(baconBot.chat.roomadvertising, {name: chat.un}));
                         API.moderateDeleteChat(chat.cid);
                         return true;
                     }
@@ -1183,7 +1183,7 @@
                  **/
                 if (msg.indexOf('http://adf.ly/') > -1) {
                     API.moderateDeleteChat(chat.cid);
-                    API.sendChat(subChat(basicBot.chat.adfly, {name: chat.un}));
+                    API.sendChat(subChat(baconBot.chat.adfly, {name: chat.un}));
                     return true;
                 }
                 if (msg.indexOf('autojoin was not enabled') > 0 || msg.indexOf('AFK message was not enabled') > 0 || msg.indexOf('!afkdisable') > 0 || msg.indexOf('!joindisable') > 0 || msg.indexOf('autojoin disabled') > 0 || msg.indexOf('AFK message disabled') > 0) {
@@ -1191,8 +1191,8 @@
                     return true;
                 }
 
-                var rlJoinChat = basicBot.chat.roulettejoin;
-                var rlLeaveChat = basicBot.chat.rouletteleave;
+                var rlJoinChat = baconBot.chat.roulettejoin;
+                var rlLeaveChat = baconBot.chat.rouletteleave;
 
                 var joinedroulette = rlJoinChat.split('%%NAME%%');
                 if (joinedroulette[1].length > joinedroulette[0].length) joinedroulette = joinedroulette[1];
@@ -1202,7 +1202,7 @@
                 if (leftroulette[1].length > leftroulette[0].length) leftroulette = leftroulette[1];
                 else leftroulette = leftroulette[0];
 
-                if ((msg.indexOf(joinedroulette) > -1 || msg.indexOf(leftroulette) > -1) && chat.uid === basicBot.loggedInID) {
+                if ((msg.indexOf(joinedroulette) > -1 || msg.indexOf(leftroulette) > -1) && chat.uid === baconBot.loggedInID) {
                     setTimeout(function (id) {
                         API.moderateDeleteChat(id);
                     }, 5 * 1000, chat.cid);
@@ -1212,7 +1212,7 @@
             },
             commandCheck: function (chat) {
                 var cmd;
-                if (chat.message.charAt(0) === basicBot.settings.commandLiteral) {
+                if (chat.message.charAt(0) === baconBot.settings.commandLiteral) {
                     var space = chat.message.indexOf(' ');
                     if (space === -1) {
                         cmd = chat.message;
@@ -1220,15 +1220,15 @@
                     else cmd = chat.message.substring(0, space);
                 }
                 else return false;
-                var userPerm = basicBot.userUtilities.getPermission(chat.uid);
+                var userPerm = baconBot.userUtilities.getPermission(chat.uid);
                 //console.log("name: " + chat.un + ", perm: " + userPerm);
-                if (chat.message !== basicBot.settings.commandLiteral + 'join' && chat.message !== basicBot.settings.commandLiteral + "leave") {
-                    if (userPerm === 0 && !basicBot.room.usercommand) return void (0);
-                    if (!basicBot.room.allcommand) return void (0);
+                if (chat.message !== baconBot.settings.commandLiteral + 'join' && chat.message !== baconBot.settings.commandLiteral + "leave") {
+                    if (userPerm === 0 && !baconBot.room.usercommand) return void (0);
+                    if (!baconBot.room.allcommand) return void (0);
                 }
-                if (chat.message === basicBot.settings.commandLiteral + 'eta' && basicBot.settings.etaRestriction) {
+                if (chat.message === baconBot.settings.commandLiteral + 'eta' && baconBot.settings.etaRestriction) {
                     if (userPerm < 2) {
-                        var u = basicBot.userUtilities.lookupUser(chat.uid);
+                        var u = baconBot.userUtilities.lookupUser(chat.uid);
                         if (u.lastEta !== null && (Date.now() - u.lastEta) < 1 * 60 * 60 * 1000) {
                             API.moderateDeleteChat(chat.cid);
                             return void (0);
@@ -1238,14 +1238,14 @@
                 }
                 var executed = false;
 
-                for (var comm in basicBot.commands) {
-                    var cmdCall = basicBot.commands[comm].command;
+                for (var comm in baconBot.commands) {
+                    var cmdCall = baconBot.commands[comm].command;
                     if (!Array.isArray(cmdCall)) {
                         cmdCall = [cmdCall]
                     }
                     for (var i = 0; i < cmdCall.length; i++) {
-                        if (basicBot.settings.commandLiteral + cmdCall[i] === cmd) {
-                            basicBot.commands[comm].functionality(chat, basicBot.settings.commandLiteral + cmdCall[i]);
+                        if (baconBot.settings.commandLiteral + cmdCall[i] === cmd) {
+                            baconBot.commands[comm].functionality(chat, baconBot.settings.commandLiteral + cmdCall[i]);
                             executed = true;
                             break;
                         }
@@ -1253,34 +1253,34 @@
                 }
 
                 if (executed && userPerm === 0) {
-                    basicBot.room.usercommand = false;
+                    baconBot.room.usercommand = false;
                     setTimeout(function () {
-                        basicBot.room.usercommand = true;
-                    }, basicBot.settings.commandCooldown * 1000);
+                        baconBot.room.usercommand = true;
+                    }, baconBot.settings.commandCooldown * 1000);
                 }
                 if (executed) {
-                    /*if (basicBot.settings.cmdDeletion) {
+                    /*if (baconBot.settings.cmdDeletion) {
                         API.moderateDeleteChat(chat.cid);
                     }*/
 
-                    //basicBot.room.allcommand = false;
+                    //baconBot.room.allcommand = false;
                     //setTimeout(function () {
-                        basicBot.room.allcommand = true;
+                        baconBot.room.allcommand = true;
                     //}, 5 * 1000);
                 }
                 return executed;
             },
             action: function (chat) {
-                var user = basicBot.userUtilities.lookupUser(chat.uid);
+                var user = baconBot.userUtilities.lookupUser(chat.uid);
                 if (chat.type === 'message') {
-                    for (var j = 0; j < basicBot.room.users.length; j++) {
-                        if (basicBot.userUtilities.getUser(basicBot.room.users[j]).id === chat.uid) {
-                            basicBot.userUtilities.setLastActivity(basicBot.room.users[j]);
+                    for (var j = 0; j < baconBot.room.users.length; j++) {
+                        if (baconBot.userUtilities.getUser(baconBot.room.users[j]).id === chat.uid) {
+                            baconBot.userUtilities.setLastActivity(baconBot.room.users[j]);
                         }
 
                     }
                 }
-                basicBot.room.roomstats.chatmessages++;
+                baconBot.room.roomstats.chatmessages++;
             },
             spam: [
                 'hueh', 'hu3', 'brbr', 'heu', 'brbr', 'kkkk', 'spoder', 'mafia', 'zuera', 'zueira',
@@ -1343,9 +1343,9 @@
                 return 'Function.'
             };
             var u = API.getUser();
-            if (basicBot.userUtilities.getPermission(u) < 2) return API.chatLog(basicBot.chat.greyuser);
-            if (basicBot.userUtilities.getPermission(u) === 2) API.chatLog(basicBot.chat.bouncer);
-            basicBot.connectAPI();
+            if (baconBot.userUtilities.getPermission(u) < 2) return API.chatLog(baconBot.chat.greyuser);
+            if (baconBot.userUtilities.getPermission(u) === 2) API.chatLog(baconBot.chat.bouncer);
+            baconBot.connectAPI();
             API.moderateDeleteChat = function (cid) {
                 $.ajax({
                     url: "https://plug.dj/_/chat/" + cid,
@@ -1353,21 +1353,21 @@
                 })
             };
 
-            basicBot.room.name = window.location.pathname;
+            baconBot.room.name = window.location.pathname;
             var Check;
 
-            console.log(basicBot.room.name);
+            console.log(baconBot.room.name);
 
             var detect = function(){
-                if(basicBot.room.name != window.location.pathname){
+                if(baconBot.room.name != window.location.pathname){
                     console.log("Killing bot after room change.");
                     storeToStorage();
-                    basicBot.disconnectAPI();
+                    baconBot.disconnectAPI();
                     setTimeout(function () {
                         kill();
                     }, 1000);
-                    if (basicBot.settings.roomLock){
-                        window.location = 'https://plug.dj' + basicBot.room.name;
+                    if (baconBot.settings.roomLock){
+                        window.location = 'https://plug.dj' + baconBot.room.name;
                     }
                     else {
                         clearInterval(Check);
@@ -1379,52 +1379,52 @@
 
             retrieveSettings();
             retrieveFromStorage();
-            window.bot = basicBot;
-            basicBot.roomUtilities.updateBlacklists();
-            setInterval(basicBot.roomUtilities.updateBlacklists, 60 * 60 * 1000);
-            basicBot.getNewBlacklistedSongs = basicBot.roomUtilities.exportNewBlacklistedSongs;
-            basicBot.logNewBlacklistedSongs = basicBot.roomUtilities.logNewBlacklistedSongs;
-            if (basicBot.room.roomstats.launchTime === null) {
-                basicBot.room.roomstats.launchTime = Date.now();
+            window.bot = baconBot;
+            baconBot.roomUtilities.updateBlacklists();
+            setInterval(baconBot.roomUtilities.updateBlacklists, 60 * 60 * 1000);
+            baconBot.getNewBlacklistedSongs = baconBot.roomUtilities.exportNewBlacklistedSongs;
+            baconBot.logNewBlacklistedSongs = baconBot.roomUtilities.logNewBlacklistedSongs;
+            if (baconBot.room.roomstats.launchTime === null) {
+                baconBot.room.roomstats.launchTime = Date.now();
             }
 
-            for (var j = 0; j < basicBot.room.users.length; j++) {
-                basicBot.room.users[j].inRoom = false;
+            for (var j = 0; j < baconBot.room.users.length; j++) {
+                baconBot.room.users[j].inRoom = false;
             }
             var userlist = API.getUsers();
             for (var i = 0; i < userlist.length; i++) {
                 var known = false;
                 var ind = null;
-                for (var j = 0; j < basicBot.room.users.length; j++) {
-                    if (basicBot.room.users[j].id === userlist[i].id) {
+                for (var j = 0; j < baconBot.room.users.length; j++) {
+                    if (baconBot.room.users[j].id === userlist[i].id) {
                         known = true;
                         ind = j;
                     }
                 }
                 if (known) {
-                    basicBot.room.users[ind].inRoom = true;
+                    baconBot.room.users[ind].inRoom = true;
                 }
                 else {
-                    basicBot.room.users.push(new basicBot.User(userlist[i].id, userlist[i].username));
-                    ind = basicBot.room.users.length - 1;
+                    baconBot.room.users.push(new baconBot.User(userlist[i].id, userlist[i].username));
+                    ind = baconBot.room.users.length - 1;
                 }
-                var wlIndex = API.getWaitListPosition(basicBot.room.users[ind].id) + 1;
-                basicBot.userUtilities.updatePosition(basicBot.room.users[ind], wlIndex);
+                var wlIndex = API.getWaitListPosition(baconBot.room.users[ind].id) + 1;
+                baconBot.userUtilities.updatePosition(baconBot.room.users[ind], wlIndex);
             }
-            basicBot.room.afkInterval = setInterval(function () {
-                basicBot.roomUtilities.afkCheck()
+            baconBot.room.afkInterval = setInterval(function () {
+                baconBot.roomUtilities.afkCheck()
             }, 10 * 1000);
-            basicBot.room.autodisableInterval = setInterval(function () {
-                basicBot.room.autodisableFunc();
+            baconBot.room.autodisableInterval = setInterval(function () {
+                baconBot.room.autodisableFunc();
             }, 60 * 60 * 1000);
-            basicBot.loggedInID = API.getUser().id;
-            basicBot.status = true;
-            API.sendChat('/cap ' + basicBot.settings.startupCap);
-            API.setVolume(basicBot.settings.startupVolume);
-            if (basicBot.settings.autowoot) {
+            baconBot.loggedInID = API.getUser().id;
+            baconBot.status = true;
+            API.sendChat('/cap ' + baconBot.settings.startupCap);
+            API.setVolume(baconBot.settings.startupVolume);
+            if (baconBot.settings.autowoot) {
                 $("#woot").click();
             }
-            if (basicBot.settings.startupEmoji) {
+            if (baconBot.settings.startupEmoji) {
                 var emojibuttonoff = $(".icon-emoji-off");
                 if (emojibuttonoff.length > 0) {
                     emojibuttonoff[0].click();
@@ -1438,15 +1438,15 @@
                 }
                 API.chatLog('Emojis disabled.');
             }
-            API.chatLog('Avatars capped at ' + basicBot.settings.startupCap);
-            API.chatLog('Volume set to ' + basicBot.settings.startupVolume);
+            API.chatLog('Avatars capped at ' + baconBot.settings.startupCap);
+            API.chatLog('Volume set to ' + baconBot.settings.startupVolume);
             socket();
-            loadChat(API.sendChat(subChat(basicBot.chat.online, {botname: basicBot.settings.botName, version: basicBot.version})));
+            loadChat(API.sendChat(subChat(baconBot.chat.online, {botname: baconBot.settings.botName, version: baconBot.version})));
         },
         commands: {
             executable: function (minRank, chat) {
                 var id = chat.uid;
-                var perm = basicBot.userUtilities.getPermission(id);
+                var perm = baconBot.userUtilities.getPermission(id);
                 var minPerm;
                 switch (minRank) {
                     case 'admin':
@@ -1465,7 +1465,7 @@
                         minPerm = 3;
                         break;
                     case 'mod':
-                        if (basicBot.settings.bouncerPlus) {
+                        if (baconBot.settings.bouncerPlus) {
                             minPerm = 2;
                         }
                         else {
@@ -1494,7 +1494,7 @@
                         type: 'startsWith/exact',
                         functionality: function(chat, cmd){
                                 if(this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                                if( !basicBot.commands.executable(this.rank, chat) ) return void (0);
+                                if( !baconBot.commands.executable(this.rank, chat) ) return void (0);
                                 else{
 
                                 }
@@ -1508,29 +1508,29 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         var now = Date.now();
                         var chatters = 0;
                         var time;
 
-                        var launchT = basicBot.room.roomstats.launchTime;
+                        var launchT = baconBot.room.roomstats.launchTime;
                         var durationOnline = Date.now() - launchT;
                         var since = durationOnline / 1000;
 
                         if (msg.length === cmd.length) time = since;
                         else {
                             time = msg.substring(cmd.length + 1);
-                            if (isNaN(time)) return API.sendChat(subChat(basicBot.chat.invalidtime, {name: chat.un}));
+                            if (isNaN(time)) return API.sendChat(subChat(baconBot.chat.invalidtime, {name: chat.un}));
                         }
-                        for (var i = 0; i < basicBot.room.users.length; i++) {
-                            userTime = basicBot.userUtilities.getLastActivity(basicBot.room.users[i]);
+                        for (var i = 0; i < baconBot.room.users.length; i++) {
+                            userTime = baconBot.userUtilities.getLastActivity(baconBot.room.users[i]);
                             if ((now - userTime) <= (time * 60 * 1000)) {
                                 chatters++;
                             }
                         }
-                        API.sendChat(subChat(basicBot.chat.activeusersintime, {name: chat.un, amount: chatters, time: time}));
+                        API.sendChat(subChat(baconBot.chat.activeusersintime, {name: chat.un, amount: chatters, time: time}));
                     }
                 }
             },
@@ -1541,19 +1541,19 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(baconBot.chat.nouserspecified, {name: chat.un}));
                         var name = msg.substr(cmd.length + 2);
-                        var user = basicBot.userUtilities.lookupUserName(name);
+                        var user = baconBot.userUtilities.lookupUserName(name);
                         if (msg.length > cmd.length + 2) {
                             if (typeof user !== 'undefined') {
-                                if (basicBot.room.roomevent) {
-                                    basicBot.room.eventArtists.push(user.id);
+                                if (baconBot.room.roomevent) {
+                                    baconBot.room.eventArtists.push(user.id);
                                 }
                                 API.moderateAddDJ(user.id);
-                            } else API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
+                            } else API.sendChat(subChat(baconBot.chat.invaliduserspecified, {name: chat.un}));
                         }
                     }
                 }
@@ -1565,16 +1565,16 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nolimitspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(baconBot.chat.nolimitspecified, {name: chat.un}));
                         var limit = msg.substring(cmd.length + 1);
                         if (!isNaN(limit)) {
-                            basicBot.settings.maximumAfk = parseInt(limit, 10);
-                            API.sendChat(subChat(basicBot.chat.maximumafktimeset, {name: chat.un, time: basicBot.settings.maximumAfk}));
+                            baconBot.settings.maximumAfk = parseInt(limit, 10);
+                            API.sendChat(subChat(baconBot.chat.maximumafktimeset, {name: chat.un, time: baconBot.settings.maximumAfk}));
                         }
-                        else API.sendChat(subChat(basicBot.chat.invalidlimitspecified, {name: chat.un}));
+                        else API.sendChat(subChat(baconBot.chat.invalidlimitspecified, {name: chat.un}));
                     }
                 }
             },
@@ -1585,19 +1585,19 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.afkRemoval) {
-                            basicBot.settings.afkRemoval = !basicBot.settings.afkRemoval;
-                            clearInterval(basicBot.room.afkInterval);
-                            API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.afkremoval}));
+                        if (baconBot.settings.afkRemoval) {
+                            baconBot.settings.afkRemoval = !baconBot.settings.afkRemoval;
+                            clearInterval(baconBot.room.afkInterval);
+                            API.sendChat(subChat(baconBot.chat.toggleoff, {name: chat.un, 'function': baconBot.chat.afkremoval}));
                         }
                         else {
-                            basicBot.settings.afkRemoval = !basicBot.settings.afkRemoval;
-                            basicBot.room.afkInterval = setInterval(function () {
-                                basicBot.roomUtilities.afkCheck()
+                            baconBot.settings.afkRemoval = !baconBot.settings.afkRemoval;
+                            baconBot.room.afkInterval = setInterval(function () {
+                                baconBot.roomUtilities.afkCheck()
                             }, 2 * 1000);
-                            API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.afkremoval}));
+                            API.sendChat(subChat(baconBot.chat.toggleon, {name: chat.un, 'function': baconBot.chat.afkremoval}));
                         }
                     }
                 }
@@ -1609,15 +1609,15 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(baconBot.chat.nouserspecified, {name: chat.un}));
                         var name = msg.substring(cmd.length + 2);
-                        var user = basicBot.userUtilities.lookupUserName(name);
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
-                        basicBot.userUtilities.setLastActivity(user);
-                        API.sendChat(subChat(basicBot.chat.afkstatusreset, {name: chat.un, username: name}));
+                        var user = baconBot.userUtilities.lookupUserName(name);
+                        if (typeof user === 'boolean') return API.sendChat(subChat(baconBot.chat.invaliduserspecified, {name: chat.un}));
+                        baconBot.userUtilities.setLastActivity(user);
+                        API.sendChat(subChat(baconBot.chat.afkstatusreset, {name: chat.un, username: name}));
                     }
                 }
             },
@@ -1628,24 +1628,24 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(baconBot.chat.nouserspecified, {name: chat.un}));
                         var name = msg.substring(cmd.length + 2);
-                        var user = basicBot.userUtilities.lookupUserName(name);
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
-                        var lastActive = basicBot.userUtilities.getLastActivity(user);
+                        var user = baconBot.userUtilities.lookupUserName(name);
+                        if (typeof user === 'boolean') return API.sendChat(subChat(baconBot.chat.invaliduserspecified, {name: chat.un}));
+                        var lastActive = baconBot.userUtilities.getLastActivity(user);
                         var inactivity = Date.now() - lastActive;
-                        var time = basicBot.roomUtilities.msToStr(inactivity);
+                        var time = baconBot.roomUtilities.msToStr(inactivity);
 
-                        var launchT = basicBot.room.roomstats.launchTime;
+                        var launchT = baconBot.room.roomstats.launchTime;
                         var durationOnline = Date.now() - launchT;
 
                         if (inactivity == durationOnline){
-                            API.sendChat(subChat(basicBot.chat.inactivelonger, {botname: basicBot.settings.botName, name: chat.un, username: name}));
+                            API.sendChat(subChat(baconBot.chat.inactivelonger, {botname: baconBot.settings.botName, name: chat.un, username: name}));
                         } else {
-                        API.sendChat(subChat(basicBot.chat.inactivefor, {name: chat.un, username: name, time: time}));
+                        API.sendChat(subChat(baconBot.chat.inactivefor, {name: chat.un, username: name, time: time}));
                         }
                     }
                 }
@@ -1657,15 +1657,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.autodisable) {
-                            basicBot.settings.autodisable = !basicBot.settings.autodisable;
-                            return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.autodisable}));
+                        if (baconBot.settings.autodisable) {
+                            baconBot.settings.autodisable = !baconBot.settings.autodisable;
+                            return API.sendChat(subChat(baconBot.chat.toggleoff, {name: chat.un, 'function': baconBot.chat.autodisable}));
                         }
                         else {
-                            basicBot.settings.autodisable = !basicBot.settings.autodisable;
-                            return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.autodisable}));
+                            baconBot.settings.autodisable = !baconBot.settings.autodisable;
+                            return API.sendChat(subChat(baconBot.chat.toggleon, {name: chat.un, 'function': baconBot.chat.autodisable}));
                         }
 
                     }
@@ -1678,16 +1678,16 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.autoskip) {
-                            basicBot.settings.autoskip = !basicBot.settings.autoskip;
-                            clearTimeout(basicBot.room.autoskipTimer);
-                            return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.autoskip}));
+                        if (baconBot.settings.autoskip) {
+                            baconBot.settings.autoskip = !baconBot.settings.autoskip;
+                            clearTimeout(baconBot.room.autoskipTimer);
+                            return API.sendChat(subChat(baconBot.chat.toggleoff, {name: chat.un, 'function': baconBot.chat.autoskip}));
                         }
                         else {
-                            basicBot.settings.autoskip = !basicBot.settings.autoskip;
-                            return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.autoskip}));
+                            baconBot.settings.autoskip = !baconBot.settings.autoskip;
+                            return API.sendChat(subChat(baconBot.chat.toggleon, {name: chat.un, 'function': baconBot.chat.autoskip}));
                         }
                     }
                 }
@@ -1699,9 +1699,9 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        API.sendChat(basicBot.chat.autowoot);
+                        API.sendChat(baconBot.chat.autowoot);
                     }
                 }
             },
@@ -1712,9 +1712,9 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        API.sendChat(basicBot.chat.brandambassador);
+                        API.sendChat(baconBot.chat.brandambassador);
                     }
                 }
             },
@@ -1725,15 +1725,15 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                             var crowd = API.getUsers();
                             var msg = chat.message;
                             var argument = msg.substring(cmd.length + 1).replace(/@/g, '');
                             var randomUser = Math.floor(Math.random() * crowd.length);
-                            var randomBall = Math.floor(Math.random() * basicBot.chat.balls.length);
+                            var randomBall = Math.floor(Math.random() * baconBot.chat.balls.length);
                             var randomSentence = Math.floor(Math.random() * 1);
-                            API.sendChat(subChat(basicBot.chat.ball, {name: chat.un, botname: basicBot.settings.botName, question: argument, response: basicBot.chat.balls[randomBall]}));
+                            API.sendChat(subChat(baconBot.chat.ball, {name: chat.un, botname: baconBot.settings.botName, question: argument, response: baconBot.chat.balls[randomBall]}));
                      }
                 }
             },
@@ -1744,15 +1744,15 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(baconBot.chat.nouserspecified, {name: chat.un}));
                         var name = msg.substr(cmd.length + 2);
-                        var user = basicBot.userUtilities.lookupUserName(name);
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
-                        var permFrom = basicBot.userUtilities.getPermission(chat.uid);
-                        var permUser = basicBot.userUtilities.getPermission(user.id);
+                        var user = baconBot.userUtilities.lookupUserName(name);
+                        if (typeof user === 'boolean') return API.sendChat(subChat(baconBot.chat.invaliduserspecified, {name: chat.un}));
+                        var permFrom = baconBot.userUtilities.getPermission(chat.uid);
+                        var permUser = baconBot.userUtilities.getPermission(user.id);
                         if (permUser >= permFrom) return void(0);
                         API.moderateBanUser(user.id, 1, API.BAN.DAY);
                     }
@@ -1765,12 +1765,12 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nolistspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(baconBot.chat.nolistspecified, {name: chat.un}));
                         var list = msg.substr(cmd.length + 1);
-                        if (typeof basicBot.room.blacklists[list] === 'undefined') return API.sendChat(subChat(basicBot.chat.invalidlistspecified, {name: chat.un}));
+                        if (typeof baconBot.room.blacklists[list] === 'undefined') return API.sendChat(subChat(baconBot.chat.invalidlistspecified, {name: chat.un}));
                         else {
                             var media = API.getMedia();
                             var timeLeft = API.getTimeRemaining();
@@ -1781,17 +1781,17 @@
                                 title: media.title,
                                 mid: media.format + ':' + media.cid
                             };
-                            basicBot.room.newBlacklisted.push(track);
-                            basicBot.room.blacklists[list].push(media.format + ':' + media.cid);
-                            API.sendChat(subChat(basicBot.chat.newblacklisted, {name: chat.un, blacklist: list, author: media.author, title: media.title, mid: media.format + ':' + media.cid}));
-                            if (basicBot.settings.smartSkip && timeLeft > timeElapsed){
-                                basicBot.roomUtilities.smartSkip();
+                            baconBot.room.newBlacklisted.push(track);
+                            baconBot.room.blacklists[list].push(media.format + ':' + media.cid);
+                            API.sendChat(subChat(baconBot.chat.newblacklisted, {name: chat.un, blacklist: list, author: media.author, title: media.title, mid: media.format + ':' + media.cid}));
+                            if (baconBot.settings.smartSkip && timeLeft > timeElapsed){
+                                baconBot.roomUtilities.smartSkip();
                             }
                             else {
                                 API.moderateForceSkip();
                             }
-                            if (typeof basicBot.room.newBlacklistedSongFunction === 'function') {
-                                basicBot.room.newBlacklistedSongFunction(track);
+                            if (typeof baconBot.room.newBlacklistedSongFunction === 'function') {
+                                baconBot.room.newBlacklistedSongFunction(track);
                             }
                         }
                     }
@@ -1804,7 +1804,7 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var author = API.getMedia().author;
                         var title = API.getMedia().title;
@@ -1813,7 +1813,7 @@
                         var cid = API.getMedia().cid;
                         var songid = format + ":" + cid;
 
-                        API.sendChat(subChat(basicBot.chat.blinfo, {name: name, author: author, title: title, songid: songid}));
+                        API.sendChat(subChat(baconBot.chat.blinfo, {name: name, author: author, title: title, songid: songid}));
                     }
                 }
             },
@@ -1824,23 +1824,23 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (basicBot.settings.bouncerPlus) {
-                            basicBot.settings.bouncerPlus = false;
-                            return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': 'Bouncer+'}));
+                        if (baconBot.settings.bouncerPlus) {
+                            baconBot.settings.bouncerPlus = false;
+                            return API.sendChat(subChat(baconBot.chat.toggleoff, {name: chat.un, 'function': 'Bouncer+'}));
                         }
                         else {
-                            if (!basicBot.settings.bouncerPlus) {
+                            if (!baconBot.settings.bouncerPlus) {
                                 var id = chat.uid;
-                                var perm = basicBot.userUtilities.getPermission(id);
+                                var perm = baconBot.userUtilities.getPermission(id);
                                 if (perm > 2) {
-                                    basicBot.settings.bouncerPlus = true;
-                                    return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': 'Bouncer+'}));
+                                    baconBot.settings.bouncerPlus = true;
+                                    return API.sendChat(subChat(baconBot.chat.toggleon, {name: chat.un, 'function': 'Bouncer+'}));
                                 }
                             }
-                            else return API.sendChat(subChat(basicBot.chat.bouncerplusrank, {name: chat.un}));
+                            else return API.sendChat(subChat(baconBot.chat.bouncerplusrank, {name: chat.un}));
                         }
                     }
                 }
@@ -1852,14 +1852,14 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length <= cmd.length + 1) return API.sendChat(subChat(basicBot.chat.currentbotname, {botname: basicBot.settings.botName}));
+                        if (msg.length <= cmd.length + 1) return API.sendChat(subChat(baconBot.chat.currentbotname, {botname: baconBot.settings.botName}));
                         var argument = msg.substring(cmd.length + 1);
                         if (argument) {
-                            basicBot.settings.botName = argument;
-                            API.sendChat(subChat(basicBot.chat.botnameset, {botName: basicBot.settings.botName}));
+                            baconBot.settings.botName = argument;
+                            API.sendChat(subChat(baconBot.chat.botnameset, {botName: baconBot.settings.botName}));
                         }
                     }
                 }
@@ -1871,13 +1871,13 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var currentchat = $('#chat-messages').children();
                         for (var i = 0; i < currentchat.length; i++) {
                             API.moderateDeleteChat(currentchat[i].getAttribute("data-cid"));
                         }
-                        return API.sendChat(subChat(basicBot.chat.chatcleared, {name: chat.un}));
+                        return API.sendChat(subChat(baconBot.chat.chatcleared, {name: chat.un}));
                     }
                 }
             },
@@ -1888,9 +1888,9 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        API.sendChat(subChat(basicBot.chat.commandslink, {botname: basicBot.settings.botName, link: basicBot.cmdLink}));
+                        API.sendChat(subChat(baconBot.chat.commandslink, {botname: baconBot.settings.botName, link: baconBot.cmdLink}));
                     }
                 }
             },
@@ -1901,15 +1901,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.cmdDeletion) {
-                            basicBot.settings.cmdDeletion = !basicBot.settings.cmdDeletion;
-                            API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.cmddeletion}));
+                        if (baconBot.settings.cmdDeletion) {
+                            baconBot.settings.cmdDeletion = !baconBot.settings.cmdDeletion;
+                            API.sendChat(subChat(baconBot.chat.toggleoff, {name: chat.un, 'function': baconBot.chat.cmddeletion}));
                         }
                         else {
-                            basicBot.settings.cmdDeletion = !basicBot.settings.cmdDeletion;
-                            API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.cmddeletion}));
+                            baconBot.settings.cmdDeletion = !baconBot.settings.cmdDeletion;
+                            API.sendChat(subChat(baconBot.chat.toggleon, {name: chat.un, 'function': baconBot.chat.cmddeletion}));
                         }
                     }
                 }
@@ -1920,31 +1920,31 @@
                 rank: 'user',
                 type: 'startsWith',
                 getCookie: function (chat) {
-                    var c = Math.floor(Math.random() * basicBot.chat.cookies.length);
-                    return basicBot.chat.cookies[c];
+                    var c = Math.floor(Math.random() * baconBot.chat.cookies.length);
+                    return baconBot.chat.cookies[c];
                 },
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
 
                         var space = msg.indexOf(' ');
                         if (space === -1) {
-                            API.sendChat(basicBot.chat.eatcookie);
+                            API.sendChat(baconBot.chat.eatcookie);
                             return false;
                         }
                         else {
                             var name = msg.substring(space + 2);
-                            var user = basicBot.userUtilities.lookupUserName(name);
+                            var user = baconBot.userUtilities.lookupUserName(name);
                             if (user === false || !user.inRoom) {
-                                return API.sendChat(subChat(basicBot.chat.nousercookie, {name: name}));
+                                return API.sendChat(subChat(baconBot.chat.nousercookie, {name: name}));
                             }
                             else if (user.username === chat.un) {
-                                return API.sendChat(subChat(basicBot.chat.selfcookie, {name: name}));
+                                return API.sendChat(subChat(baconBot.chat.selfcookie, {name: name}));
                             }
                             else {
-                                return API.sendChat(subChat(basicBot.chat.cookie, {nameto: user.username, namefrom: chat.un, cookie: this.getCookie()}));
+                                return API.sendChat(subChat(baconBot.chat.cookie, {nameto: user.username, namefrom: chat.un, cookie: this.getCookie()}));
                             }
                         }
                     }
@@ -1957,9 +1957,9 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        basicBot.roomUtilities.changeDJCycle();
+                        baconBot.roomUtilities.changeDJCycle();
                     }
                 }
             },
@@ -1970,15 +1970,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.cycleGuard) {
-                            basicBot.settings.cycleGuard = !basicBot.settings.cycleGuard;
-                            return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.cycleguard}));
+                        if (baconBot.settings.cycleGuard) {
+                            baconBot.settings.cycleGuard = !baconBot.settings.cycleGuard;
+                            return API.sendChat(subChat(baconBot.chat.toggleoff, {name: chat.un, 'function': baconBot.chat.cycleguard}));
                         }
                         else {
-                            basicBot.settings.cycleGuard = !basicBot.settings.cycleGuard;
-                            return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.cycleguard}));
+                            baconBot.settings.cycleGuard = !baconBot.settings.cycleGuard;
+                            return API.sendChat(subChat(baconBot.chat.toggleon, {name: chat.un, 'function': baconBot.chat.cycleguard}));
                         }
 
                     }
@@ -1991,15 +1991,15 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         var cycleTime = msg.substring(cmd.length + 1);
                         if (!isNaN(cycleTime) && cycleTime !== "") {
-                            basicBot.settings.maximumCycletime = cycleTime;
-                            return API.sendChat(subChat(basicBot.chat.cycleguardtime, {name: chat.un, time: basicBot.settings.maximumCycletime}));
+                            baconBot.settings.maximumCycletime = cycleTime;
+                            return API.sendChat(subChat(baconBot.chat.cycleguardtime, {name: chat.un, time: baconBot.settings.maximumCycletime}));
                         }
-                        else return API.sendChat(subChat(basicBot.chat.invalidtime, {name: chat.un}));
+                        else return API.sendChat(subChat(baconBot.chat.invalidtime, {name: chat.un}));
 
                     }
                 }
@@ -2011,19 +2011,19 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         var name;
                         if (msg.length === cmd.length) name = chat.un;
                         else {
                             name = msg.substring(cmd.length + 2);
-                            var perm = basicBot.userUtilities.getPermission(chat.uid);
-                            if (perm < 2) return API.sendChat(subChat(basicBot.chat.dclookuprank, {name: chat.un}));
+                            var perm = baconBot.userUtilities.getPermission(chat.uid);
+                            if (perm < 2) return API.sendChat(subChat(baconBot.chat.dclookuprank, {name: chat.un}));
                         }
-                        var user = basicBot.userUtilities.lookupUserName(name);
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
-                        var toChat = basicBot.userUtilities.dclookup(user.id);
+                        var user = baconBot.userUtilities.lookupUserName(name);
+                        if (typeof user === 'boolean') return API.sendChat(subChat(baconBot.chat.invaliduserspecified, {name: chat.un}));
+                        var toChat = baconBot.userUtilities.dclookup(user.id);
                         API.sendChat(toChat);
                     }
                 }
@@ -2039,13 +2039,13 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(baconBot.chat.nouserspecified, {name: chat.un}));
                         var name = msg.substring(cmd.length + 2);
-                        var user = basicBot.userUtilities.lookupUserName(name);
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
+                        var user = baconBot.userUtilities.lookupUserName(name);
+                        if (typeof user === 'boolean') return API.sendChat(subChat(baconBot.chat.invaliduserspecified, {name: chat.un}));
                         var chats = $('.from');
                         var message = $('.message');
                         var emote = $('.emote');
@@ -2072,7 +2072,7 @@
                                 }
                             }
                         }
-                        API.sendChat(subChat(basicBot.chat.deletechat, {name: chat.un, username: name}));
+                        API.sendChat(subChat(baconBot.chat.deletechat, {name: chat.un, username: name}));
                     }
                 }
             },
@@ -2085,20 +2085,20 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(baconBot.chat.nouserspecified, {name: chat.un}));
                         var name = msg.substring(cmd.length + 2);
-                        var user = basicBot.userUtilities.lookupUserName(name);
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
-                        for (var i = 1; i < basicBot.room.chatMessages.length; i++) {
-                          if (basicBot.room.chatMessages[i].indexOf(user.id) > -1){
-                            API.moderateDeleteChat(basicBot.room.chatMessages[i][0]);
-                            basicBot.room.chatMessages[i].splice(0);
+                        var user = baconBot.userUtilities.lookupUserName(name);
+                        if (typeof user === 'boolean') return API.sendChat(subChat(baconBot.chat.invaliduserspecified, {name: chat.un}));
+                        for (var i = 1; i < baconBot.room.chatMessages.length; i++) {
+                          if (baconBot.room.chatMessages[i].indexOf(user.id) > -1){
+                            API.moderateDeleteChat(baconBot.room.chatMessages[i][0]);
+                            baconBot.room.chatMessages[i].splice(0);
                           }
                         }
-                        API.sendChat(subChat(basicBot.chat.deletechat, {name: chat.un, username: name}));
+                        API.sendChat(subChat(baconBot.chat.deletechat, {name: chat.un, username: name}));
                     }
                 }
             },
@@ -2110,10 +2110,10 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var link = 'http://www.emoji-cheat-sheet.com/';
-                        API.sendChat(subChat(basicBot.chat.emojilist, {link: link}));
+                        API.sendChat(subChat(baconBot.chat.emojilist, {link: link}));
                     }
                 }
             },
@@ -2124,13 +2124,13 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         if(chat.message.length === cmd.length) return API.sendChat('/me No user specified.');
                         var name = chat.message.substring(cmd.length + 2);
-                        var user = basicBot.userUtilities.lookupUserName(name);
+                        var user = baconBot.userUtilities.lookupUserName(name);
                         if(typeof user === 'boolean') return API.sendChat('/me Invalid user specified.');
-                        var lang = basicBot.userUtilities.getUser(user).language;
+                        var lang = baconBot.userUtilities.getUser(user).language;
                         var ch = '/me @' + name + ' ';
                         switch(lang){
                             case 'en': break;
@@ -2157,9 +2157,9 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        var perm = basicBot.userUtilities.getPermission(chat.uid);
+                        var perm = baconBot.userUtilities.getPermission(chat.uid);
                         var msg = chat.message;
                         var dj = API.getDJ().username;
                         var name;
@@ -2167,17 +2167,17 @@
                             if (perm < 2) return void (0);
                             name = msg.substring(cmd.length + 2);
                         } else name = chat.un;
-                        var user = basicBot.userUtilities.lookupUserName(name);
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
+                        var user = baconBot.userUtilities.lookupUserName(name);
+                        if (typeof user === 'boolean') return API.sendChat(subChat(baconBot.chat.invaliduserspecified, {name: chat.un}));
                         var pos = API.getWaitListPosition(user.id);
                         var realpos = pos + 1;
-                        if (name == dj) return API.sendChat(subChat(basicBot.chat.youaredj, {name: name}));
-                        if (pos < 0) return API.sendChat(subChat(basicBot.chat.notinwaitlist, {name: name}));
-                        if (pos == 0) return API.sendChat(subChat(basicBot.chat.youarenext, {name: name}));
+                        if (name == dj) return API.sendChat(subChat(baconBot.chat.youaredj, {name: name}));
+                        if (pos < 0) return API.sendChat(subChat(baconBot.chat.notinwaitlist, {name: name}));
+                        if (pos == 0) return API.sendChat(subChat(baconBot.chat.youarenext, {name: name}));
                         var timeRemaining = API.getTimeRemaining();
                         var estimateMS = ((pos + 1) * 4 * 60 + timeRemaining) * 1000;
-                        var estimateString = basicBot.roomUtilities.msToStr(estimateMS);
-                        API.sendChat(subChat(basicBot.chat.eta, {name: name, time: estimateString, position: realpos}));
+                        var estimateString = baconBot.roomUtilities.msToStr(estimateMS);
+                        API.sendChat(subChat(baconBot.chat.eta, {name: name, time: estimateString, position: realpos}));
                     }
                 }
             },
@@ -2188,10 +2188,10 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (typeof basicBot.settings.fbLink === "string")
-                            API.sendChat(subChat(basicBot.chat.facebook, {link: basicBot.settings.fbLink}));
+                        if (typeof baconBot.settings.fbLink === "string")
+                            API.sendChat(subChat(baconBot.chat.facebook, {link: baconBot.settings.fbLink}));
                     }
                 }
             },
@@ -2202,15 +2202,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.filterChat) {
-                            basicBot.settings.filterChat = !basicBot.settings.filterChat;
-                            return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.chatfilter}));
+                        if (baconBot.settings.filterChat) {
+                            baconBot.settings.filterChat = !baconBot.settings.filterChat;
+                            return API.sendChat(subChat(baconBot.chat.toggleoff, {name: chat.un, 'function': baconBot.chat.chatfilter}));
                         }
                         else {
-                            basicBot.settings.filterChat = !basicBot.settings.filterChat;
-                            return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.chatfilter}));
+                            baconBot.settings.filterChat = !baconBot.settings.filterChat;
+                            return API.sendChat(subChat(baconBot.chat.toggleon, {name: chat.un, 'function': baconBot.chat.chatfilter}));
                         }
                     }
                 }
@@ -2222,13 +2222,13 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        API.sendChat(subChat(basicBot.chat.forceskip, {name: chat.un}));
+                        API.sendChat(subChat(baconBot.chat.forceskip, {name: chat.un}));
                         API.moderateForceSkip();
-                        basicBot.room.skippable = false;
+                        baconBot.room.skippable = false;
                         setTimeout(function () {
-                            basicBot.room.skippable = true
+                            baconBot.room.skippable = true
                         }, 5 * 1000);
 
                     }
@@ -2241,7 +2241,7 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         var name;
@@ -2249,11 +2249,11 @@
                         else {
                             name = msg.substr(cmd.length + 2);
                         }
-                        var user = basicBot.userUtilities.lookupUserName(name);
+                        var user = baconBot.userUtilities.lookupUserName(name);
                         if (user === false || !user.inRoom) {
-                            return API.sendChat(subChat(basicBot.chat.ghosting, {name1: chat.un, name2: name}));
+                            return API.sendChat(subChat(baconBot.chat.ghosting, {name1: chat.un, name2: name}));
                         }
-                        else API.sendChat(subChat(basicBot.chat.notghosting, {name1: chat.un, name2: name}));
+                        else API.sendChat(subChat(baconBot.chat.notghosting, {name1: chat.un, name2: name}));
                     }
                 }
             },
@@ -2264,7 +2264,7 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         if (msg.length !== cmd.length) {
@@ -2291,9 +2291,9 @@
                             var commatag = tag.replace(/ /g,", ");
                             get_id(api_key, tag, function(id) {
                                 if (typeof id !== 'undefined') {
-                                    API.sendChat(subChat(basicBot.chat.validgiftags, {name: chat.un, id: id, tags: commatag}));
+                                    API.sendChat(subChat(baconBot.chat.validgiftags, {name: chat.un, id: id, tags: commatag}));
                                 } else {
-                                    API.sendChat(subChat(basicBot.chat.invalidgiftags, {name: chat.un, tags: commatag}));
+                                    API.sendChat(subChat(baconBot.chat.invalidgiftags, {name: chat.un, tags: commatag}));
                                 }
                             });
                         }
@@ -2317,9 +2317,9 @@
                             var rating = "pg-13"; // PG 13 gifs
                             get_random_id(api_key, function(id) {
                                 if (typeof id !== 'undefined') {
-                                    API.sendChat(subChat(basicBot.chat.validgifrandom, {name: chat.un, id: id}));
+                                    API.sendChat(subChat(baconBot.chat.validgifrandom, {name: chat.un, id: id}));
                                 } else {
-                                    API.sendChat(subChat(basicBot.chat.invalidgifrandom, {name: chat.un}));
+                                    API.sendChat(subChat(baconBot.chat.invalidgifrandom, {name: chat.un}));
                                 }
                             });
                         }
@@ -2333,10 +2333,10 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var link = "(Updated link coming soon)";
-                        API.sendChat(subChat(basicBot.chat.starterhelp, {link: link}));
+                        API.sendChat(subChat(baconBot.chat.starterhelp, {link: link}));
                     }
                 }
             },
@@ -2347,15 +2347,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.historySkip) {
-                            basicBot.settings.historySkip = !basicBot.settings.historySkip;
-                            API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.historyskip}));
+                        if (baconBot.settings.historySkip) {
+                            baconBot.settings.historySkip = !baconBot.settings.historySkip;
+                            API.sendChat(subChat(baconBot.chat.toggleoff, {name: chat.un, 'function': baconBot.chat.historyskip}));
                         }
                         else {
-                            basicBot.settings.historySkip = !basicBot.settings.historySkip;
-                            API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.historyskip}));
+                            baconBot.settings.historySkip = !baconBot.settings.historySkip;
+                            API.sendChat(subChat(baconBot.chat.toggleon, {name: chat.un, 'function': baconBot.chat.historyskip}));
                         }
                     }
                 }
@@ -2367,11 +2367,11 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.room.roulette.rouletteStatus && basicBot.room.roulette.participants.indexOf(chat.uid) < 0) {
-                            basicBot.room.roulette.participants.push(chat.uid);
-                            API.sendChat(subChat(basicBot.chat.roulettejoin, {name: chat.un}));
+                        if (baconBot.room.roulette.rouletteStatus && baconBot.room.roulette.participants.indexOf(chat.uid) < 0) {
+                            baconBot.room.roulette.participants.push(chat.uid);
+                            API.sendChat(subChat(baconBot.chat.roulettejoin, {name: chat.un}));
                         }
                     }
                 }
@@ -2383,17 +2383,17 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(baconBot.chat.nouserspecified, {name: chat.un}));
                         var name = msg.substring(cmd.length + 2);
-                        var user = basicBot.userUtilities.lookupUserName(name);
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
-                        var join = basicBot.userUtilities.getJointime(user);
+                        var user = baconBot.userUtilities.lookupUserName(name);
+                        if (typeof user === 'boolean') return API.sendChat(subChat(baconBot.chat.invaliduserspecified, {name: chat.un}));
+                        var join = baconBot.userUtilities.getJointime(user);
                         var time = Date.now() - join;
-                        var timeString = basicBot.roomUtilities.msToStr(time);
-                        API.sendChat(subChat(basicBot.chat.jointime, {namefrom: chat.un, username: name, time: timeString}));
+                        var timeString = baconBot.roomUtilities.msToStr(time);
+                        API.sendChat(subChat(baconBot.chat.jointime, {namefrom: chat.un, username: name, time: timeString}));
                     }
                 }
             },
@@ -2404,7 +2404,7 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         var lastSpace = msg.lastIndexOf(' ');
@@ -2419,18 +2419,18 @@
                             name = msg.substring(cmd.length + 2, lastSpace);
                         }
 
-                        var user = basicBot.userUtilities.lookupUserName(name);
+                        var user = baconBot.userUtilities.lookupUserName(name);
                         var from = chat.un;
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                        if (typeof user === 'boolean') return API.sendChat(subChat(baconBot.chat.nouserspecified, {name: chat.un}));
 
-                        var permFrom = basicBot.userUtilities.getPermission(chat.uid);
-                        var permTokick = basicBot.userUtilities.getPermission(user.id);
+                        var permFrom = baconBot.userUtilities.getPermission(chat.uid);
+                        var permTokick = baconBot.userUtilities.getPermission(user.id);
 
                         if (permFrom <= permTokick)
-                            return API.sendChat(subChat(basicBot.chat.kickrank, {name: chat.un}));
+                            return API.sendChat(subChat(baconBot.chat.kickrank, {name: chat.un}));
 
                         if (!isNaN(time)) {
-                            API.sendChat(subChat(basicBot.chat.kick, {name: chat.un, username: name, time: time}));
+                            API.sendChat(subChat(baconBot.chat.kick, {name: chat.un, username: name, time: time}));
                             if (time > 24 * 60 * 60) API.moderateBanUser(user.id, 1, API.BAN.PERMA);
                             else API.moderateBanUser(user.id, 1, API.BAN.DAY);
                             setTimeout(function (id, name) {
@@ -2438,7 +2438,7 @@
                                 console.log('Unbanned @' + name + '. (' + id + ')');
                             }, time * 60 * 1000, user.id, name);
                         }
-                        else API.sendChat(subChat(basicBot.chat.invalidtime, {name: chat.un}));
+                        else API.sendChat(subChat(baconBot.chat.invalidtime, {name: chat.un}));
                     }
                 }
             },
@@ -2449,12 +2449,12 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         storeToStorage();
                         sendToSocket();
-                        API.sendChat(basicBot.chat.kill);
-                        basicBot.disconnectAPI();
+                        API.sendChat(baconBot.chat.kill);
+                        baconBot.disconnectAPI();
                         setTimeout(function () {
                             kill();
                         }, 1000);
@@ -2468,22 +2468,22 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length <= cmd.length + 1) return API.sendChat(subChat(basicBot.chat.currentlang, {language: basicBot.settings.language}));
+                        if (msg.length <= cmd.length + 1) return API.sendChat(subChat(baconBot.chat.currentlang, {language: baconBot.settings.language}));
                         var argument = msg.substring(cmd.length + 1);
 
                         $.get("https://rawgit.com/BaconGirl/Baconbot/master/lang/langIndex.json", function (json) {
                             var langIndex = json;
                             var link = langIndex[argument.toLowerCase()];
                             if (typeof link === "undefined") {
-                                API.sendChat(subChat(basicBot.chat.langerror, {link: "http://git.io/vJ9nI"}));
+                                API.sendChat(subChat(baconBot.chat.langerror, {link: "http://git.io/vJ9nI"}));
                             }
                             else {
-                                basicBot.settings.language = argument;
+                                baconBot.settings.language = argument;
                                 loadChat();
-                                API.sendChat(subChat(basicBot.chat.langset, {language: basicBot.settings.language}));
+                                API.sendChat(subChat(baconBot.chat.langset, {language: baconBot.settings.language}));
                             }
                         });
                     }
@@ -2496,12 +2496,12 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        var ind = basicBot.room.roulette.participants.indexOf(chat.uid);
+                        var ind = baconBot.room.roulette.participants.indexOf(chat.uid);
                         if (ind > -1) {
-                            basicBot.room.roulette.participants.splice(ind, 1);
-                            API.sendChat(subChat(basicBot.chat.rouletteleave, {name: chat.un}));
+                            baconBot.room.roulette.participants.splice(ind, 1);
+                            API.sendChat(subChat(baconBot.chat.rouletteleave, {name: chat.un}));
                         }
                     }
                 }
@@ -2513,23 +2513,23 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var media = API.getMedia();
                         var from = chat.un;
-                        var user = basicBot.userUtilities.lookupUser(chat.uid);
-                        var perm = basicBot.userUtilities.getPermission(chat.uid);
+                        var user = baconBot.userUtilities.lookupUser(chat.uid);
+                        var perm = baconBot.userUtilities.getPermission(chat.uid);
                         var dj = API.getDJ().id;
                         var isDj = false;
                         if (dj === chat.uid) isDj = true;
                         if (perm >= 1 || isDj) {
                             if (media.format === 1) {
                                 var linkToSong = "https://youtu.be/" + media.cid;
-                                API.sendChat(subChat(basicBot.chat.songlink, {name: from, link: linkToSong}));
+                                API.sendChat(subChat(baconBot.chat.songlink, {name: from, link: linkToSong}));
                             }
                             if (media.format === 2) {
                                 SC.get('/tracks/' + media.cid, function (sound) {
-                                    API.sendChat(subChat(basicBot.chat.songlink, {name: from, link: sound.permalink_url}));
+                                    API.sendChat(subChat(baconBot.chat.songlink, {name: from, link: sound.permalink_url}));
                                 });
                             }
                         }
@@ -2543,9 +2543,9 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        basicBot.roomUtilities.booth.lockBooth();
+                        baconBot.roomUtilities.booth.lockBooth();
                     }
                 }
             },
@@ -2556,14 +2556,14 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        var temp = basicBot.settings.lockdownEnabled;
-                        basicBot.settings.lockdownEnabled = !temp;
-                        if (basicBot.settings.lockdownEnabled) {
-                            return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.lockdown}));
+                        var temp = baconBot.settings.lockdownEnabled;
+                        baconBot.settings.lockdownEnabled = !temp;
+                        if (baconBot.settings.lockdownEnabled) {
+                            return API.sendChat(subChat(baconBot.chat.toggleon, {name: chat.un, 'function': baconBot.chat.lockdown}));
                         }
-                        else return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.lockdown}));
+                        else return API.sendChat(subChat(baconBot.chat.toggleoff, {name: chat.un, 'function': baconBot.chat.lockdown}));
                     }
                 }
             },
@@ -2574,15 +2574,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.lockGuard) {
-                            basicBot.settings.lockGuard = !basicBot.settings.lockGuard;
-                            return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.lockguard}));
+                        if (baconBot.settings.lockGuard) {
+                            baconBot.settings.lockGuard = !baconBot.settings.lockGuard;
+                            return API.sendChat(subChat(baconBot.chat.toggleoff, {name: chat.un, 'function': baconBot.chat.lockguard}));
                         }
                         else {
-                            basicBot.settings.lockGuard = !basicBot.settings.lockGuard;
-                            return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.lockguard}));
+                            baconBot.settings.lockGuard = !baconBot.settings.lockGuard;
+                            return API.sendChat(subChat(baconBot.chat.toggleon, {name: chat.un, 'function': baconBot.chat.lockguard}));
                         }
                     }
                 }
@@ -2594,29 +2594,29 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.room.skippable) {
+                        if (baconBot.room.skippable) {
                             var dj = API.getDJ();
                             var id = dj.id;
                             var name = dj.username;
                             var msgSend = '@' + name + ': ';
-                            basicBot.room.queueable = false;
+                            baconBot.room.queueable = false;
 
                             if (chat.message.length === cmd.length) {
-                                API.sendChat(subChat(basicBot.chat.usedlockskip, {name: chat.un}));
-                                basicBot.roomUtilities.booth.lockBooth();
+                                API.sendChat(subChat(baconBot.chat.usedlockskip, {name: chat.un}));
+                                baconBot.roomUtilities.booth.lockBooth();
                                 setTimeout(function (id) {
                                     API.moderateForceSkip();
-                                    basicBot.room.skippable = false;
+                                    baconBot.room.skippable = false;
                                     setTimeout(function () {
-                                        basicBot.room.skippable = true
+                                        baconBot.room.skippable = true
                                     }, 5 * 1000);
                                     setTimeout(function (id) {
-                                        basicBot.userUtilities.moveUser(id, basicBot.settings.lockskipPosition, false);
-                                        basicBot.room.queueable = true;
+                                        baconBot.userUtilities.moveUser(id, baconBot.settings.lockskipPosition, false);
+                                        baconBot.room.queueable = true;
                                         setTimeout(function () {
-                                            basicBot.roomUtilities.booth.unlockBooth();
+                                            baconBot.roomUtilities.booth.unlockBooth();
                                         }, 1000);
                                     }, 1500, id);
                                 }, 1000, id);
@@ -2625,28 +2625,28 @@
                             var validReason = false;
                             var msg = chat.message;
                             var reason = msg.substring(cmd.length + 1);
-                            for (var i = 0; i < basicBot.settings.lockskipReasons.length; i++) {
-                                var r = basicBot.settings.lockskipReasons[i][0];
+                            for (var i = 0; i < baconBot.settings.lockskipReasons.length; i++) {
+                                var r = baconBot.settings.lockskipReasons[i][0];
                                 if (reason.indexOf(r) !== -1) {
                                     validReason = true;
-                                    msgSend += basicBot.settings.lockskipReasons[i][1];
+                                    msgSend += baconBot.settings.lockskipReasons[i][1];
                                 }
                             }
                             if (validReason) {
-                                API.sendChat(subChat(basicBot.chat.usedlockskip, {name: chat.un}));
-                                basicBot.roomUtilities.booth.lockBooth();
+                                API.sendChat(subChat(baconBot.chat.usedlockskip, {name: chat.un}));
+                                baconBot.roomUtilities.booth.lockBooth();
                                 setTimeout(function (id) {
                                     API.moderateForceSkip();
-                                    basicBot.room.skippable = false;
+                                    baconBot.room.skippable = false;
                                     API.sendChat(msgSend);
                                     setTimeout(function () {
-                                        basicBot.room.skippable = true
+                                        baconBot.room.skippable = true
                                     }, 5 * 1000);
                                     setTimeout(function (id) {
-                                        basicBot.userUtilities.moveUser(id, basicBot.settings.lockskipPosition, false);
-                                        basicBot.room.queueable = true;
+                                        baconBot.userUtilities.moveUser(id, baconBot.settings.lockskipPosition, false);
+                                        baconBot.room.queueable = true;
                                         setTimeout(function () {
-                                            basicBot.roomUtilities.booth.unlockBooth();
+                                            baconBot.roomUtilities.booth.unlockBooth();
                                         }, 1000);
                                     }, 1500, id);
                                 }, 1000, id);
@@ -2663,15 +2663,15 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         var lockTime = msg.substring(cmd.length + 1);
                         if (!isNaN(lockTime) && lockTime !== "") {
-                            basicBot.settings.maximumLocktime = lockTime;
-                            return API.sendChat(subChat(basicBot.chat.lockguardtime, {name: chat.un, time: basicBot.settings.maximumLocktime}));
+                            baconBot.settings.maximumLocktime = lockTime;
+                            return API.sendChat(subChat(baconBot.chat.lockguardtime, {name: chat.un, time: baconBot.settings.maximumLocktime}));
                         }
-                        else return API.sendChat(subChat(basicBot.chat.invalidtime, {name: chat.un}));
+                        else return API.sendChat(subChat(baconBot.chat.invalidtime, {name: chat.un}));
                     }
                 }
             },
@@ -2682,9 +2682,9 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        API.sendChat(subChat(basicBot.chat.logout, {name: chat.un, botname: basicBot.settings.botName}));
+                        API.sendChat(subChat(baconBot.chat.logout, {name: chat.un, botname: baconBot.settings.botName}));
                         setTimeout(function () {
                             $(".logout").mousedown()
                         }, 1000);
@@ -2698,15 +2698,15 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         var maxTime = msg.substring(cmd.length + 1);
                         if (!isNaN(maxTime)) {
-                            basicBot.settings.maximumSongLength = maxTime;
-                            return API.sendChat(subChat(basicBot.chat.maxlengthtime, {name: chat.un, time: basicBot.settings.maximumSongLength}));
+                            baconBot.settings.maximumSongLength = maxTime;
+                            return API.sendChat(subChat(baconBot.chat.maxlengthtime, {name: chat.un, time: baconBot.settings.maximumSongLength}));
                         }
-                        else return API.sendChat(subChat(basicBot.chat.invalidtime, {name: chat.un}));
+                        else return API.sendChat(subChat(baconBot.chat.invalidtime, {name: chat.un}));
                     }
                 }
             },
@@ -2717,19 +2717,19 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length <= cmd.length + 1) return API.sendChat('/me MotD: ' + basicBot.settings.motd);
+                        if (msg.length <= cmd.length + 1) return API.sendChat('/me MotD: ' + baconBot.settings.motd);
                         var argument = msg.substring(cmd.length + 1);
-                        if (!basicBot.settings.motdEnabled) basicBot.settings.motdEnabled = !basicBot.settings.motdEnabled;
+                        if (!baconBot.settings.motdEnabled) baconBot.settings.motdEnabled = !baconBot.settings.motdEnabled;
                         if (isNaN(argument)) {
-                            basicBot.settings.motd = argument;
-                            API.sendChat(subChat(basicBot.chat.motdset, {msg: basicBot.settings.motd}));
+                            baconBot.settings.motd = argument;
+                            API.sendChat(subChat(baconBot.chat.motdset, {msg: baconBot.settings.motd}));
                         }
                         else {
-                            basicBot.settings.motdInterval = argument;
-                            API.sendChat(subChat(basicBot.chat.motdintervalset, {interval: basicBot.settings.motdInterval}));
+                            baconBot.settings.motdInterval = argument;
+                            API.sendChat(subChat(baconBot.chat.motdintervalset, {interval: baconBot.settings.motdInterval}));
                         }
                     }
                 }
@@ -2741,10 +2741,10 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(baconBot.chat.nouserspecified, {name: chat.un}));
                         var firstSpace = msg.indexOf(' ');
                         var lastSpace = msg.lastIndexOf(' ');
                         var pos;
@@ -2757,13 +2757,13 @@
                             pos = parseInt(msg.substring(lastSpace + 1));
                             name = msg.substring(cmd.length + 2, lastSpace);
                         }
-                        var user = basicBot.userUtilities.lookupUserName(name);
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
-                        if (user.id === basicBot.loggedInID) return API.sendChat(subChat(basicBot.chat.addbotwaitlist, {name: chat.un}));
+                        var user = baconBot.userUtilities.lookupUserName(name);
+                        if (typeof user === 'boolean') return API.sendChat(subChat(baconBot.chat.invaliduserspecified, {name: chat.un}));
+                        if (user.id === baconBot.loggedInID) return API.sendChat(subChat(baconBot.chat.addbotwaitlist, {name: chat.un}));
                         if (!isNaN(pos)) {
-                            API.sendChat(subChat(basicBot.chat.move, {name: chat.un}));
-                            basicBot.userUtilities.moveUser(user.id, pos, false);
-                        } else return API.sendChat(subChat(basicBot.chat.invalidpositionspecified, {name: chat.un}));
+                            API.sendChat(subChat(baconBot.chat.move, {name: chat.un}));
+                            baconBot.userUtilities.moveUser(user.id, pos, false);
+                        } else return API.sendChat(subChat(baconBot.chat.invalidpositionspecified, {name: chat.un}));
                     }
                 }
             },
@@ -2774,10 +2774,10 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(baconBot.chat.nouserspecified, {name: chat.un}));
                         var lastSpace = msg.lastIndexOf(' ');
                         var time = null;
                         var name;
@@ -2788,23 +2788,23 @@
                         else {
                             time = msg.substring(lastSpace + 1);
                             if (isNaN(time) || time == "" || time == null || typeof time == "undefined") {
-                                return API.sendChat(subChat(basicBot.chat.invalidtime, {name: chat.un}));
+                                return API.sendChat(subChat(baconBot.chat.invalidtime, {name: chat.un}));
                             }
                             name = msg.substring(cmd.length + 2, lastSpace);
                         }
                         var from = chat.un;
-                        var user = basicBot.userUtilities.lookupUserName(name);
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
-                        var permFrom = basicBot.userUtilities.getPermission(chat.uid);
-                        var permUser = basicBot.userUtilities.getPermission(user.id);
+                        var user = baconBot.userUtilities.lookupUserName(name);
+                        if (typeof user === 'boolean') return API.sendChat(subChat(baconBot.chat.invaliduserspecified, {name: chat.un}));
+                        var permFrom = baconBot.userUtilities.getPermission(chat.uid);
+                        var permUser = baconBot.userUtilities.getPermission(user.id);
                         if (permFrom > permUser) {
                             /*
-                             basicBot.room.mutedUsers.push(user.id);
-                             if (time === null) API.sendChat(subChat(basicBot.chat.mutednotime, {name: chat.un, username: name}));
+                             baconBot.room.mutedUsers.push(user.id);
+                             if (time === null) API.sendChat(subChat(baconBot.chat.mutednotime, {name: chat.un, username: name}));
                              else {
-                             API.sendChat(subChat(basicBot.chat.mutedtime, {name: chat.un, username: name, time: time}));
+                             API.sendChat(subChat(baconBot.chat.mutedtime, {name: chat.un, username: name, time: time}));
                              setTimeout(function (id) {
-                             var muted = basicBot.room.mutedUsers;
+                             var muted = baconBot.room.mutedUsers;
                              var wasMuted = false;
                              var indexMuted = -1;
                              for (var i = 0; i < muted.length; i++) {
@@ -2814,46 +2814,46 @@
                              }
                              }
                              if (indexMuted > -1) {
-                             basicBot.room.mutedUsers.splice(indexMuted);
-                             var u = basicBot.userUtilities.lookupUser(id);
+                             baconBot.room.mutedUsers.splice(indexMuted);
+                             var u = baconBot.userUtilities.lookupUser(id);
                              var name = u.username;
-                             API.sendChat(subChat(basicBot.chat.unmuted, {name: chat.un, username: name}));
+                             API.sendChat(subChat(baconBot.chat.unmuted, {name: chat.un, username: name}));
                              }
                              }, time * 60 * 1000, user.id);
                              }
                              */
                             if (time > 45) {
-                                API.sendChat(subChat(basicBot.chat.mutedmaxtime, {name: chat.un, time: "45"}));
+                                API.sendChat(subChat(baconBot.chat.mutedmaxtime, {name: chat.un, time: "45"}));
                                 API.moderateMuteUser(user.id, 1, API.MUTE.LONG);
                             }
                             else if (time === 45) {
                                 API.moderateMuteUser(user.id, 1, API.MUTE.LONG);
-                                API.sendChat(subChat(basicBot.chat.mutedtime, {name: chat.un, username: name, time: time}));
+                                API.sendChat(subChat(baconBot.chat.mutedtime, {name: chat.un, username: name, time: time}));
 
                             }
                             else if (time > 30) {
                                 API.moderateMuteUser(user.id, 1, API.MUTE.LONG);
-                                API.sendChat(subChat(basicBot.chat.mutedtime, {name: chat.un, username: name, time: time}));
+                                API.sendChat(subChat(baconBot.chat.mutedtime, {name: chat.un, username: name, time: time}));
                                 setTimeout(function (id) {
                                     API.moderateUnmuteUser(id);
                                 }, time * 60 * 1000, user.id);
                             }
                             else if (time > 15) {
                                 API.moderateMuteUser(user.id, 1, API.MUTE.MEDIUM);
-                                API.sendChat(subChat(basicBot.chat.mutedtime, {name: chat.un, username: name, time: time}));
+                                API.sendChat(subChat(baconBot.chat.mutedtime, {name: chat.un, username: name, time: time}));
                                 setTimeout(function (id) {
                                     API.moderateUnmuteUser(id);
                                 }, time * 60 * 1000, user.id);
                             }
                             else {
                                 API.moderateMuteUser(user.id, 1, API.MUTE.SHORT);
-                                API.sendChat(subChat(basicBot.chat.mutedtime, {name: chat.un, username: name, time: time}));
+                                API.sendChat(subChat(baconBot.chat.mutedtime, {name: chat.un, username: name, time: time}));
                                 setTimeout(function (id) {
                                     API.moderateUnmuteUser(id);
                                 }, time * 60 * 1000, user.id);
                             }
                         }
-                        else API.sendChat(subChat(basicBot.chat.muterank, {name: chat.un}));
+                        else API.sendChat(subChat(baconBot.chat.muterank, {name: chat.un}));
                     }
                 }
             },
@@ -2864,10 +2864,10 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (typeof basicBot.settings.opLink === "string")
-                            return API.sendChat(subChat(basicBot.chat.oplist, {link: basicBot.settings.opLink}));
+                        if (typeof baconBot.settings.opLink === "string")
+                            return API.sendChat(subChat(baconBot.chat.oplist, {link: baconBot.settings.opLink}));
                     }
                 }
             },
@@ -2878,9 +2878,9 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        API.sendChat(basicBot.chat.pong)
+                        API.sendChat(baconBot.chat.pong)
                     }
                 }
             },
@@ -2891,11 +2891,11 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         sendToSocket();
                         storeToStorage();
-                        basicBot.disconnectAPI();
+                        baconBot.disconnectAPI();
                         setTimeout(function () {
                             window.location.reload(false);
                         }, 1000);
@@ -2910,15 +2910,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        API.sendChat(basicBot.chat.reload);
+                        API.sendChat(baconBot.chat.reload);
                         sendToSocket();
                         storeToStorage();
-                        basicBot.disconnectAPI();
+                        baconBot.disconnectAPI();
                         kill();
                         setTimeout(function () {
-                            $.getScript(basicBot.settings.scriptLink);
+                            $.getScript(baconBot.settings.scriptLink);
                         }, 2000);
                     }
                 }
@@ -2930,12 +2930,12 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         if (msg.length > cmd.length + 2) {
                             var name = msg.substr(cmd.length + 2);
-                            var user = basicBot.userUtilities.lookupUserName(name);
+                            var user = baconBot.userUtilities.lookupUserName(name);
                             if (typeof user !== 'boolean') {
                                 user.lastDC = {
                                     time: null,
@@ -2949,8 +2949,8 @@
                                     }, 1 * 1000, user);
                                 }
                                 else API.moderateRemoveDJ(user.id);
-                            } else API.sendChat(subChat(basicBot.chat.removenotinwl, {name: chat.un, username: name}));
-                        } else API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                            } else API.sendChat(subChat(baconBot.chat.removenotinwl, {name: chat.un, username: name}));
+                        } else API.sendChat(subChat(baconBot.chat.nouserspecified, {name: chat.un}));
                     }
                 }
             },
@@ -2961,15 +2961,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.etaRestriction) {
-                            basicBot.settings.etaRestriction = !basicBot.settings.etaRestriction;
-                            return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.etarestriction}));
+                        if (baconBot.settings.etaRestriction) {
+                            baconBot.settings.etaRestriction = !baconBot.settings.etaRestriction;
+                            return API.sendChat(subChat(baconBot.chat.toggleoff, {name: chat.un, 'function': baconBot.chat.etarestriction}));
                         }
                         else {
-                            basicBot.settings.etaRestriction = !basicBot.settings.etaRestriction;
-                            return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.etarestriction}));
+                            baconBot.settings.etaRestriction = !baconBot.settings.etaRestriction;
+                            return API.sendChat(subChat(baconBot.chat.toggleon, {name: chat.un, 'function': baconBot.chat.etarestriction}));
                         }
                     }
                 }
@@ -2981,10 +2981,10 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (!basicBot.room.roulette.rouletteStatus) {
-                            basicBot.room.roulette.startRoulette();
+                        if (!baconBot.room.roulette.rouletteStatus) {
+                            baconBot.room.roulette.startRoulette();
                         }
                     }
                 }
@@ -2996,10 +2996,10 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (typeof basicBot.settings.rulesLink === "string")
-                            return API.sendChat(subChat(basicBot.chat.roomrules, {link: basicBot.settings.rulesLink}));
+                        if (typeof baconBot.settings.rulesLink === "string")
+                            return API.sendChat(subChat(baconBot.chat.roomrules, {link: baconBot.settings.rulesLink}));
                     }
                 }
             },
@@ -3010,13 +3010,13 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var from = chat.un;
-                        var woots = basicBot.room.roomstats.totalWoots;
-                        var mehs = basicBot.room.roomstats.totalMehs;
-                        var grabs = basicBot.room.roomstats.totalCurates;
-                        API.sendChat(subChat(basicBot.chat.sessionstats, {name: from, woots: woots, mehs: mehs, grabs: grabs}));
+                        var woots = baconBot.room.roomstats.totalWoots;
+                        var mehs = baconBot.room.roomstats.totalMehs;
+                        var grabs = baconBot.room.roomstats.totalCurates;
+                        API.sendChat(subChat(baconBot.chat.sessionstats, {name: from, woots: woots, mehs: mehs, grabs: grabs}));
                     }
                 }
             },
@@ -3027,9 +3027,9 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.room.skippable) {
+                        if (baconBot.room.skippable) {
 
                             var timeLeft = API.getTimeRemaining();
                             var timeElapsed = API.getTimeElapsed();
@@ -3038,9 +3038,9 @@
                             var msgSend = '@' + name + ', ';
 
                             if (chat.message.length === cmd.length) {
-                                API.sendChat(subChat(basicBot.chat.usedskip, {name: chat.un}));
-                                if (basicBot.settings.smartSkip && timeLeft > timeElapsed){
-                                    basicBot.roomUtilities.smartSkip();
+                                API.sendChat(subChat(baconBot.chat.usedskip, {name: chat.un}));
+                                if (baconBot.settings.smartSkip && timeLeft > timeElapsed){
+                                    baconBot.roomUtilities.smartSkip();
                                 }
                                 else {
                                     API.moderateForceSkip();
@@ -3049,17 +3049,17 @@
                             var validReason = false;
                             var msg = chat.message;
                             var reason = msg.substring(cmd.length + 1);
-                            for (var i = 0; i < basicBot.settings.skipReasons.length; i++) {
-                                var r = basicBot.settings.skipReasons[i][0];
+                            for (var i = 0; i < baconBot.settings.skipReasons.length; i++) {
+                                var r = baconBot.settings.skipReasons[i][0];
                                 if (reason.indexOf(r) !== -1) {
                                     validReason = true;
-                                    msgSend += basicBot.settings.skipReasons[i][1];
+                                    msgSend += baconBot.settings.skipReasons[i][1];
                                 }
                             }
                             if (validReason) {
-                                API.sendChat(subChat(basicBot.chat.usedskip, {name: chat.un}));
-                                if (basicBot.settings.smartSkip && timeLeft > timeElapsed){
-                                    basicBot.roomUtilities.smartSkip(msgSend);
+                                API.sendChat(subChat(baconBot.chat.usedskip, {name: chat.un}));
+                                if (baconBot.settings.smartSkip && timeLeft > timeElapsed){
+                                    baconBot.roomUtilities.smartSkip(msgSend);
                                 }
                                 else {
                                     API.moderateForceSkip();
@@ -3079,15 +3079,15 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         var pos = msg.substring(cmd.length + 1);
                         if (!isNaN(pos)) {
-                            basicBot.settings.skipPosition = pos;
-                            return API.sendChat(subChat(basicBot.chat.skippos, {name: chat.un, position: basicBot.settings.skipPosition}));
+                            baconBot.settings.skipPosition = pos;
+                            return API.sendChat(subChat(baconBot.chat.skippos, {name: chat.un, position: baconBot.settings.skipPosition}));
                         }
-                        else return API.sendChat(subChat(basicBot.chat.invalidpositionspecified, {name: chat.un}));
+                        else return API.sendChat(subChat(baconBot.chat.invalidpositionspecified, {name: chat.un}));
                     }
                 }
             },
@@ -3098,15 +3098,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.songstats) {
-                            basicBot.settings.songstats = !basicBot.settings.songstats;
-                            return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.songstats}));
+                        if (baconBot.settings.songstats) {
+                            baconBot.settings.songstats = !baconBot.settings.songstats;
+                            return API.sendChat(subChat(baconBot.chat.toggleoff, {name: chat.un, 'function': baconBot.chat.songstats}));
                         }
                         else {
-                            basicBot.settings.songstats = !basicBot.settings.songstats;
-                            return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.songstats}));
+                            baconBot.settings.songstats = !baconBot.settings.songstats;
+                            return API.sendChat(subChat(baconBot.chat.toggleon, {name: chat.un, 'function': baconBot.chat.songstats}));
                         }
                     }
                 }
@@ -3118,7 +3118,7 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         API.sendChat('/me This bot was created by ' + botCreator + ', but is now maintained by ' + botMaintainer + ".");
                     }
@@ -3131,74 +3131,74 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var from = chat.un;
                         var msg = '[@' + from + '] ';
 
-                        msg += basicBot.chat.afkremoval + ': ';
-                        if (basicBot.settings.afkRemoval) msg += 'ON';
+                        msg += baconBot.chat.afkremoval + ': ';
+                        if (baconBot.settings.afkRemoval) msg += 'ON';
                         else msg += 'OFF';
                         msg += '. ';
-                        msg += basicBot.chat.afksremoved + ": " + basicBot.room.afkList.length + '. ';
-                        msg += basicBot.chat.afklimit + ': ' + basicBot.settings.maximumAfk + '. ';
+                        msg += baconBot.chat.afksremoved + ": " + baconBot.room.afkList.length + '. ';
+                        msg += baconBot.chat.afklimit + ': ' + baconBot.settings.maximumAfk + '. ';
 
                         msg += 'Bouncer+: ';
-                        if (basicBot.settings.bouncerPlus) msg += 'ON';
+                        if (baconBot.settings.bouncerPlus) msg += 'ON';
                         else msg += 'OFF';
                         msg += '. ';
 
-                        msg += basicBot.chat.blacklist + ': ';
-                        if (basicBot.settings.blacklistEnabled) msg += 'ON';
+                        msg += baconBot.chat.blacklist + ': ';
+                        if (baconBot.settings.blacklistEnabled) msg += 'ON';
                         else msg += 'OFF';
                         msg += '. ';
 
-                        msg += basicBot.chat.lockguard + ': ';
-                        if (basicBot.settings.lockGuard) msg += 'ON';
+                        msg += baconBot.chat.lockguard + ': ';
+                        if (baconBot.settings.lockGuard) msg += 'ON';
                         else msg += 'OFF';
                         msg += '. ';
 
-                        msg += basicBot.chat.cycleguard + ': ';
-                        if (basicBot.settings.cycleGuard) msg += 'ON';
+                        msg += baconBot.chat.cycleguard + ': ';
+                        if (baconBot.settings.cycleGuard) msg += 'ON';
                         else msg += 'OFF';
                         msg += '. ';
 
-                        msg += basicBot.chat.timeguard + ': ';
-                        if (basicBot.settings.timeGuard) msg += 'ON';
+                        msg += baconBot.chat.timeguard + ': ';
+                        if (baconBot.settings.timeGuard) msg += 'ON';
                         else msg += 'OFF';
                         msg += '. ';
 
-                        msg += basicBot.chat.chatfilter + ': ';
-                        if (basicBot.settings.filterChat) msg += 'ON';
+                        msg += baconBot.chat.chatfilter + ': ';
+                        if (baconBot.settings.filterChat) msg += 'ON';
                         else msg += 'OFF';
                         msg += '. ';
 
-                        msg += basicBot.chat.historyskip + ': ';
-                        if (basicBot.settings.historySkip) msg += 'ON';
+                        msg += baconBot.chat.historyskip + ': ';
+                        if (baconBot.settings.historySkip) msg += 'ON';
                         else msg += 'OFF';
                         msg += '. ';
 
-                        msg += basicBot.chat.voteskip + ': ';
-                        if (basicBot.settings.voteSkip) msg += 'ON';
+                        msg += baconBot.chat.voteskip + ': ';
+                        if (baconBot.settings.voteSkip) msg += 'ON';
                         else msg += 'OFF';
                         msg += '. ';
 
-                        msg += basicBot.chat.cmddeletion + ': ';
-                        if (basicBot.settings.cmdDeletion) msg += 'ON';
+                        msg += baconBot.chat.cmddeletion + ': ';
+                        if (baconBot.settings.cmdDeletion) msg += 'ON';
                         else msg += 'OFF';
                         msg += '. ';
 
-                        msg += basicBot.chat.autoskip + ': ';
-                        if (basicBot.settings.autoskip) msg += 'ON';
+                        msg += baconBot.chat.autoskip + ': ';
+                        if (baconBot.settings.autoskip) msg += 'ON';
                         else msg += 'OFF';
                         msg += '. ';
 
                         // TODO: Display more toggleable bot settings.
 
-                        var launchT = basicBot.room.roomstats.launchTime;
+                        var launchT = baconBot.room.roomstats.launchTime;
                         var durationOnline = Date.now() - launchT;
-                        var since = basicBot.roomUtilities.msToStr(durationOnline);
-                        msg += subChat(basicBot.chat.activefor, {time: since});
+                        var since = baconBot.roomUtilities.msToStr(durationOnline);
+                        msg += subChat(baconBot.chat.activefor, {time: since});
 
                         /*
                         // least efficient way to go about this, but it works :)
@@ -3240,32 +3240,32 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(baconBot.chat.nouserspecified, {name: chat.un}));
                         var firstSpace = msg.indexOf(' ');
                         var lastSpace = msg.lastIndexOf(' ');
                         var name1 = msg.substring(cmd.length + 2, lastSpace);
                         var name2 = msg.substring(lastSpace + 2);
-                        var user1 = basicBot.userUtilities.lookupUserName(name1);
-                        var user2 = basicBot.userUtilities.lookupUserName(name2);
-                        if (typeof user1 === 'boolean' || typeof user2 === 'boolean') return API.sendChat(subChat(basicBot.chat.swapinvalid, {name: chat.un}));
-                        if (user1.id === basicBot.loggedInID || user2.id === basicBot.loggedInID) return API.sendChat(subChat(basicBot.chat.addbottowaitlist, {name: chat.un}));
+                        var user1 = baconBot.userUtilities.lookupUserName(name1);
+                        var user2 = baconBot.userUtilities.lookupUserName(name2);
+                        if (typeof user1 === 'boolean' || typeof user2 === 'boolean') return API.sendChat(subChat(baconBot.chat.swapinvalid, {name: chat.un}));
+                        if (user1.id === baconBot.loggedInID || user2.id === baconBot.loggedInID) return API.sendChat(subChat(baconBot.chat.addbottowaitlist, {name: chat.un}));
                         var p1 = API.getWaitListPosition(user1.id) + 1;
                         var p2 = API.getWaitListPosition(user2.id) + 1;
-                        if (p1 < 0 || p2 < 0) return API.sendChat(subChat(basicBot.chat.swapwlonly, {name: chat.un}));
-                        API.sendChat(subChat(basicBot.chat.swapping, {'name1': name1, 'name2': name2}));
+                        if (p1 < 0 || p2 < 0) return API.sendChat(subChat(baconBot.chat.swapwlonly, {name: chat.un}));
+                        API.sendChat(subChat(baconBot.chat.swapping, {'name1': name1, 'name2': name2}));
                         if (p1 < p2) {
-                            basicBot.userUtilities.moveUser(user2.id, p1, false);
+                            baconBot.userUtilities.moveUser(user2.id, p1, false);
                             setTimeout(function (user1, p2) {
-                                basicBot.userUtilities.moveUser(user1.id, p2, false);
+                                baconBot.userUtilities.moveUser(user1.id, p2, false);
                             }, 2000, user1, p2);
                         }
                         else {
-                            basicBot.userUtilities.moveUser(user1.id, p2, false);
+                            baconBot.userUtilities.moveUser(user1.id, p2, false);
                             setTimeout(function (user2, p1) {
-                                basicBot.userUtilities.moveUser(user2.id, p1, false);
+                                baconBot.userUtilities.moveUser(user2.id, p1, false);
                             }, 2000, user2, p1);
                         }
                     }
@@ -3278,10 +3278,10 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (typeof basicBot.settings.themeLink === "string")
-                            API.sendChat(subChat(basicBot.chat.genres, {link: basicBot.settings.themeLink}));
+                        if (typeof baconBot.settings.themeLink === "string")
+                            API.sendChat(subChat(baconBot.chat.genres, {link: baconBot.settings.themeLink}));
                     }
                 }
             },
@@ -3292,15 +3292,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.timeGuard) {
-                            basicBot.settings.timeGuard = !basicBot.settings.timeGuard;
-                            return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.timeguard}));
+                        if (baconBot.settings.timeGuard) {
+                            baconBot.settings.timeGuard = !baconBot.settings.timeGuard;
+                            return API.sendChat(subChat(baconBot.chat.toggleoff, {name: chat.un, 'function': baconBot.chat.timeguard}));
                         }
                         else {
-                            basicBot.settings.timeGuard = !basicBot.settings.timeGuard;
-                            return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.timeguard}));
+                            baconBot.settings.timeGuard = !baconBot.settings.timeGuard;
+                            return API.sendChat(subChat(baconBot.chat.toggleon, {name: chat.un, 'function': baconBot.chat.timeguard}));
                         }
 
                     }
@@ -3313,14 +3313,14 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        var temp = basicBot.settings.blacklistEnabled;
-                        basicBot.settings.blacklistEnabled = !temp;
-                        if (basicBot.settings.blacklistEnabled) {
-                          return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.blacklist}));
+                        var temp = baconBot.settings.blacklistEnabled;
+                        baconBot.settings.blacklistEnabled = !temp;
+                        if (baconBot.settings.blacklistEnabled) {
+                          return API.sendChat(subChat(baconBot.chat.toggleon, {name: chat.un, 'function': baconBot.chat.blacklist}));
                         }
-                        else return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.blacklist}));
+                        else return API.sendChat(subChat(baconBot.chat.toggleoff, {name: chat.un, 'function': baconBot.chat.blacklist}));
                     }
                 }
             },
@@ -3331,15 +3331,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.motdEnabled) {
-                            basicBot.settings.motdEnabled = !basicBot.settings.motdEnabled;
-                            API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.motd}));
+                        if (baconBot.settings.motdEnabled) {
+                            baconBot.settings.motdEnabled = !baconBot.settings.motdEnabled;
+                            API.sendChat(subChat(baconBot.chat.toggleoff, {name: chat.un, 'function': baconBot.chat.motd}));
                         }
                         else {
-                            basicBot.settings.motdEnabled = !basicBot.settings.motdEnabled;
-                            API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.motd}));
+                            baconBot.settings.motdEnabled = !baconBot.settings.motdEnabled;
+                            API.sendChat(subChat(baconBot.chat.toggleon, {name: chat.un, 'function': baconBot.chat.motd}));
                         }
                     }
                 }
@@ -3351,15 +3351,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.voteSkip) {
-                            basicBot.settings.voteSkip = !basicBot.settings.voteSkip;
-                            API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.voteskip}));
+                        if (baconBot.settings.voteSkip) {
+                            baconBot.settings.voteSkip = !baconBot.settings.voteSkip;
+                            API.sendChat(subChat(baconBot.chat.toggleoff, {name: chat.un, 'function': baconBot.chat.voteskip}));
                         }
                         else {
-                            basicBot.settings.voteSkip = !basicBot.settings.voteSkip;
-                            API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.voteskip}));
+                            baconBot.settings.voteSkip = !baconBot.settings.voteSkip;
+                            API.sendChat(subChat(baconBot.chat.toggleon, {name: chat.un, 'function': baconBot.chat.voteskip}));
                         }
                     }
                 }
@@ -3371,7 +3371,7 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         $(".icon-population").click();
                         $(".icon-ban").click();
@@ -3391,7 +3391,7 @@
                             }
                             if (!found) {
                                 $(".icon-chat").click();
-                                return API.sendChat(subChat(basicBot.chat.notbanned, {name: chat.un}));
+                                return API.sendChat(subChat(baconBot.chat.notbanned, {name: chat.un}));
                             }
                             API.moderateUnbanUser(bannedUser.id);
                             console.log("Unbanned " + name);
@@ -3409,9 +3409,9 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        basicBot.roomUtilities.booth.unlockBooth();
+                        baconBot.roomUtilities.booth.unlockBooth();
                     }
                 }
             },
@@ -3422,30 +3422,30 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        var permFrom = basicBot.userUtilities.getPermission(chat.uid);
+                        var permFrom = baconBot.userUtilities.getPermission(chat.uid);
                         /**
                          if (msg.indexOf('@') === -1 && msg.indexOf('all') !== -1) {
                             if (permFrom > 2) {
-                                basicBot.room.mutedUsers = [];
-                                return API.sendChat(subChat(basicBot.chat.unmutedeveryone, {name: chat.un}));
+                                baconBot.room.mutedUsers = [];
+                                return API.sendChat(subChat(baconBot.chat.unmutedeveryone, {name: chat.un}));
                             }
-                            else return API.sendChat(subChat(basicBot.chat.unmuteeveryonerank, {name: chat.un}));
+                            else return API.sendChat(subChat(baconBot.chat.unmuteeveryonerank, {name: chat.un}));
                         }
                          **/
                         var from = chat.un;
                         var name = msg.substr(cmd.length + 2);
 
-                        var user = basicBot.userUtilities.lookupUserName(name);
+                        var user = baconBot.userUtilities.lookupUserName(name);
 
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
+                        if (typeof user === 'boolean') return API.sendChat(subChat(baconBot.chat.invaliduserspecified, {name: chat.un}));
 
-                        var permUser = basicBot.userUtilities.getPermission(user.id);
+                        var permUser = baconBot.userUtilities.getPermission(user.id);
                         if (permFrom > permUser) {
                             /*
-                             var muted = basicBot.room.mutedUsers;
+                             var muted = baconBot.room.mutedUsers;
                              var wasMuted = false;
                              var indexMuted = -1;
                              for (var i = 0; i < muted.length; i++) {
@@ -3455,19 +3455,19 @@
                              }
 
                              }
-                             if (!wasMuted) return API.sendChat(subChat(basicBot.chat.notmuted, {name: chat.un}));
-                             basicBot.room.mutedUsers.splice(indexMuted);
-                             API.sendChat(subChat(basicBot.chat.unmuted, {name: chat.un, username: name}));
+                             if (!wasMuted) return API.sendChat(subChat(baconBot.chat.notmuted, {name: chat.un}));
+                             baconBot.room.mutedUsers.splice(indexMuted);
+                             API.sendChat(subChat(baconBot.chat.unmuted, {name: chat.un, username: name}));
                              */
                             try {
                                 API.moderateUnmuteUser(user.id);
-                                API.sendChat(subChat(basicBot.chat.unmuted, {name: chat.un, username: name}));
+                                API.sendChat(subChat(baconBot.chat.unmuted, {name: chat.un, username: name}));
                             }
                             catch (e) {
-                                API.sendChat(subChat(basicBot.chat.notmuted, {name: chat.un}));
+                                API.sendChat(subChat(baconBot.chat.notmuted, {name: chat.un}));
                             }
                         }
-                        else API.sendChat(subChat(basicBot.chat.unmuterank, {name: chat.un}));
+                        else API.sendChat(subChat(baconBot.chat.unmuterank, {name: chat.un}));
                     }
                 }
             },
@@ -3478,15 +3478,15 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         var cd = msg.substring(cmd.length + 1);
                         if (!isNaN(cd)) {
-                            basicBot.settings.commandCooldown = cd;
-                            return API.sendChat(subChat(basicBot.chat.commandscd, {name: chat.un, time: basicBot.settings.commandCooldown}));
+                            baconBot.settings.commandCooldown = cd;
+                            return API.sendChat(subChat(baconBot.chat.commandscd, {name: chat.un, time: baconBot.settings.commandCooldown}));
                         }
-                        else return API.sendChat(subChat(basicBot.chat.invalidtime, {name: chat.un}));
+                        else return API.sendChat(subChat(baconBot.chat.invalidtime, {name: chat.un}));
                     }
                 }
             },
@@ -3497,15 +3497,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.usercommandsEnabled) {
-                            API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.usercommands}));
-                            basicBot.settings.usercommandsEnabled = !basicBot.settings.usercommandsEnabled;
+                        if (baconBot.settings.usercommandsEnabled) {
+                            API.sendChat(subChat(baconBot.chat.toggleoff, {name: chat.un, 'function': baconBot.chat.usercommands}));
+                            baconBot.settings.usercommandsEnabled = !baconBot.settings.usercommandsEnabled;
                         }
                         else {
-                            API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.usercommands}));
-                            basicBot.settings.usercommandsEnabled = !basicBot.settings.usercommandsEnabled;
+                            API.sendChat(subChat(baconBot.chat.toggleon, {name: chat.un, 'function': baconBot.chat.usercommands}));
+                            baconBot.settings.usercommandsEnabled = !baconBot.settings.usercommandsEnabled;
                         }
                     }
                 }
@@ -3517,16 +3517,16 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(baconBot.chat.nouserspecified, {name: chat.un}));
                         var name = msg.substring(cmd.length + 2);
-                        var user = basicBot.userUtilities.lookupUserName(name);
-                        if (user === false) return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
+                        var user = baconBot.userUtilities.lookupUserName(name);
+                        if (user === false) return API.sendChat(subChat(baconBot.chat.invaliduserspecified, {name: chat.un}));
                         var vratio = user.votes;
                         var ratio = vratio.woot / vratio.meh;
-                        API.sendChat(subChat(basicBot.chat.voteratio, {name: chat.un, username: name, woot: vratio.woot, mehs: vratio.meh, ratio: ratio.toFixed(2)}));
+                        API.sendChat(subChat(baconBot.chat.voteratio, {name: chat.un, username: name, woot: vratio.woot, mehs: vratio.meh, ratio: ratio.toFixed(2)}));
                     }
                 }
             },
@@ -3537,18 +3537,18 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length <= cmd.length + 1) return API.sendChat(subChat(basicBot.chat.voteskiplimit, {name: chat.un, limit: basicBot.settings.voteSkipLimit}));
+                        if (msg.length <= cmd.length + 1) return API.sendChat(subChat(baconBot.chat.voteskiplimit, {name: chat.un, limit: baconBot.settings.voteSkipLimit}));
                         var argument = msg.substring(cmd.length + 1);
-                        if (!basicBot.settings.voteSkip) basicBot.settings.voteSkip = !basicBot.settings.voteSkip;
+                        if (!baconBot.settings.voteSkip) baconBot.settings.voteSkip = !baconBot.settings.voteSkip;
                         if (isNaN(argument)) {
-                            API.sendChat(subChat(basicBot.chat.voteskipinvalidlimit, {name: chat.un}));
+                            API.sendChat(subChat(baconBot.chat.voteskipinvalidlimit, {name: chat.un}));
                         }
                         else {
-                            basicBot.settings.voteSkipLimit = argument;
-                            API.sendChat(subChat(basicBot.chat.voteskipsetlimit, {name: chat.un, limit: basicBot.settings.voteSkipLimit}));
+                            baconBot.settings.voteSkipLimit = argument;
+                            API.sendChat(subChat(baconBot.chat.voteskipsetlimit, {name: chat.un, limit: baconBot.settings.voteSkipLimit}));
                         }
                     }
                 }
@@ -3560,15 +3560,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.welcome) {
-                            basicBot.settings.welcome = !basicBot.settings.welcome;
-                            return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.welcomemsg}));
+                        if (baconBot.settings.welcome) {
+                            baconBot.settings.welcome = !baconBot.settings.welcome;
+                            return API.sendChat(subChat(baconBot.chat.toggleoff, {name: chat.un, 'function': baconBot.chat.welcomemsg}));
                         }
                         else {
-                            basicBot.settings.welcome = !basicBot.settings.welcome;
-                            return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.welcomemsg}));
+                            baconBot.settings.welcome = !baconBot.settings.welcome;
+                            return API.sendChat(subChat(baconBot.chat.toggleon, {name: chat.un, 'function': baconBot.chat.welcomemsg}));
                         }
                     }
                 }
@@ -3580,10 +3580,10 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (typeof basicBot.settings.website === "string")
-                            API.sendChat(subChat(basicBot.chat.website, {link: basicBot.settings.website}));
+                        if (typeof baconBot.settings.website === "string")
+                            API.sendChat(subChat(baconBot.chat.website, {link: baconBot.settings.website}));
                     }
                 }
             },
@@ -3594,7 +3594,7 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         var name;
@@ -3658,7 +3658,7 @@
                                     var profile = "~";
                                 }
 
-                                API.sendChat(subChat(basicBot.chat.whois, {name1: chat.un, name2: name, id: id, avatar: avatar, profile: profile, language: language, level: level, joined: joined, rank: rank}));
+                                API.sendChat(subChat(baconBot.chat.whois, {name1: chat.un, name2: name, id: id, avatar: avatar, profile: profile, language: language, level: level, joined: joined, rank: rank}));
                             }
                         }
                     }
@@ -3671,15 +3671,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!baconBot.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (typeof basicBot.settings.youtubeLink === "string")
-                            API.sendChat(subChat(basicBot.chat.youtube, {name: chat.un, link: basicBot.settings.youtubeLink}));
+                        if (typeof baconBot.settings.youtubeLink === "string")
+                            API.sendChat(subChat(baconBot.chat.youtube, {name: chat.un, link: baconBot.settings.youtubeLink}));
                     }
                 }
             }
         }
     };
 
-    loadChat(basicBot.startup);
+    loadChat(baconBot.startup);
 }).call(this);
