@@ -296,7 +296,7 @@
             filterChat: true,
             etaRestriction: false,
             welcome: true,
-            opLink: null,
+            opLink: "http://git.io/vZ3L5",
             rulesLink: null,
             themeLink: null,
             fbLink: null,
