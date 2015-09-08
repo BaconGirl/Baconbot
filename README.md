@@ -30,7 +30,7 @@ Usage
 
 Bookmark the following code. To run the bot, run the bookmark.
 
-`javascript:(function(){$.getScript('https://rawgit.com/BaconGirl/Baconbot/master/basicBot.js');})();`
+`javascript:(function(){$.getScript('https://rawgit.com/BaconGirl/Baconbot/master/baconBot.js');})();`
 
 If this does not work, go to https://raw.githubusercontent.com/BaconGirl/Baconbot/master/basicBot.js and copy paste its content into your console (accessible in chrome by pressing f12) when on plug.dj in your community.
 
