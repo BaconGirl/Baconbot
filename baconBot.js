@@ -282,11 +282,11 @@
             skipReasons: [
                 ["meh", "The son you choose is too long or has too many mehs. "],
                 ["genre", "This song has wrong genre for the community. "],
-                ["op", "This song is on the overplayed list. "],
-                ["history", "This song is in the history. "],
+                ["op", "This song is in the overplayed list. "],
+                ["history", "This song was already played recently . "],
                 ["mix", "You played a mix, which is against the rules. "],
                 ["sound", "The song you played had bad sound quality or no sound. "],
-                ["nsfw", "The song you contained was NSFW (image or sound), offensive or innapropiate. "],
+                ["nsfw", "The song you wanted to play was NSFW (image or sound), offensive or innapropiate. "],
                 ["unavailable", "The song you played was not available for some users or does not play. "]
             ],
             afkpositionCheck: 15,
