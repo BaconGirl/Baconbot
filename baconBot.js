@@ -241,7 +241,7 @@
         name: "baconBot",
         loggedInID: null,
         scriptLink: "https://rawgit.com/BaconGirl/Baconbot/master/baconBot.js",
-        cmdLink: "http://git.io/245Ppg",
+        cmdLink: "http://git.io/vZ3fO",
         chatLink: "https://rawgit.com/BaconGirl/Baconbot/master/lang/en.json",
         chat: null,
         loadChat: loadChat,
