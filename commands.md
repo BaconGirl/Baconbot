@@ -104,6 +104,7 @@ User
 |!ba | | explains the Brand Ambassador rank |
 |!commands | | gives a link to the commands |
 |!cookie | (@user) | give a cookie to user |
+|!bacon | (@user) |  give bacon to user |
 |!dclookup / !dc | | use dclookup on yourself |
 |!emoji | | a link to a list with emoji's |
 |!eta | | shows how long before you reach the booth |
