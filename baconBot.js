@@ -1912,7 +1912,7 @@
             },
             
              baconCommand: {
-                command: 'bacon',
+                command: [bacon', 'BACON'],
                 rank: 'user',
                 type: 'startsWith',
                 getBacon: function (chat) {
