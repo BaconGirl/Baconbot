@@ -1914,7 +1914,7 @@
              baconCommand: {
                 command: 'bacon',
                 rank: 'user',
-                type: 'exact',
+                type: 'startsWith',
                 getBacon: function (chat) {
                     var c = Math.floor(Math.random() * baconBot.chat.bacons.length);
                     return baconBot.chat.bacons[c];
