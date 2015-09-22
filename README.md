@@ -22,7 +22,7 @@ These can be found in [the commands file](https://github.com/BaconGirl/Baconbot/
 
 ### Blacklists
 
-Examples of blacklists can be found in [the customization repository](https://github.com/BaconGirl/Baconbot/tree/master/Custom/blacklists).
+Examples of blacklists can be found in [the customization repository](https://github.com/BaconGirl/Baconbot/tree/master/Custom/blacklist).
 You can add blacklists in the settings of the bot via the methods given in that same repository. See below for more information.
 
 ### Copyright
